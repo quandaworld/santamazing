@@ -12,6 +12,8 @@ const wallCoords = {
 	rights: [],
 }
 
+/*---------------------------- Variables (state) ----------------------------*/
+
 /*------------------------ Cached Element References ------------------------*/
 const maze = document.getElementById('maze');
 const santa = document.getElementById('santa');
@@ -220,6 +222,14 @@ function right() {
 
 	if (santa.offsetLeft > gridWidth) {
 		displayWin();
+	}
+}
+
+// Update page UI when Santa arrives final destination
+function displayWin() {
+	if (santa.offsetLeft > gridWidth) {
+		santa.innerText = "";
+		exit.innerText = "🎉";
 	}
 }
 
