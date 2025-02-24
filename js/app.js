@@ -15,7 +15,7 @@ const maze = document.getElementById('maze');
 const santa = document.getElementById('santa');
 const exit = document.getElementById('exit');
 const walls = document.getElementsByClassName('wall');
-const wallWidth = document.getElementById('top').clientHeight;
+const wallHeight = document.getElementById('top').clientHeight;
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -48,7 +48,7 @@ function createVerticalBoundaries() {
 	const botHeight = mazeHeight - singleCellSize - topHeight;
 	const rightWall_x = mazeWidth + singleCellSize;
 
-	const walls = [
+	const boundaries = [
 		{ t: singleCellSize, l: singleCellSize, h: topHeight },
 		{ t: topHeight + 2 * singleCellSize, l: singleCellSize, h: botHeight },
 		{ t: singleCellSize, l: rightWall_x, h: botHeight },
@@ -57,19 +57,19 @@ function createVerticalBoundaries() {
 
 	// Store wall coordinates
 	wallLeftCoords.push(0, rightWall_x, 0, 0, rightWall_x, rightWall_x);
-	wallRightCoords.push(wallWidth, rightWall_x + wallWidth, singleCellSize, singleCellSize, rightWall_x, rightWall_x);
+	wallRightCoords.push(wallHeight, rightWall_x + wallHeight, singleCellSize, singleCellSize, rightWall_x, rightWall_x);
 	wallTopCoords.push(topHeight + singleCellSize, botHeight + singleCellSize, topHeight + singleCellSize,
 		topHeight + 2 * singleCellSize, botHeight + singleCellSize, botHeight + 2 * singleCellSize);
-	wallBotCoords.push(...wallTopCoords.map(coord => coord + wallWidth));
+	wallBotCoords.push(...wallTopCoords.map(coord => coord + wallHeight));
 
 	// Set Santa entry & exit position
 	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
 	Object.assign(exit.style, { top: `${botHeight + singleCellSize}px`, left: `${rightWall_x}px` });
 
-	// Create walls
-	walls.forEach(({ t, l, h }) => {
+	// Create boundaries
+	boundaries.forEach(({ t, l, h }) => {
 		const wall = document.createElement('div');
-		Object.assign(wall.style, { top: `${t}px`, left: `${l}px`, height: `${h}px`, width: `${wallWidth}px` });
+		Object.assign(wall.style, { top: `${t}px`, left: `${l}px`, height: `${h}px`, width: `${wallHeight}px` });
 		wall.classList.add('wall');
 		maze.appendChild(wall);
 	});
@@ -88,7 +88,7 @@ function shuffleArr(arr) {
 // Populate a maze using Recursive Backtracking
 function generateRandomMaze(currentX, currentY) {
 	const dirs = shuffleArr(['u', 'd', 'l', 'r']); // up, down, left, right
-	const dirsCoords = { // directions' coordinates x, y, opposite
+	const dirsCoords = { // Directions' coordinates x, y, opposite
 		u: { x: 0, y: -1, o: 'd' },
 		d: { x: 0, y: 1, o: 'u' },
 		l: { x: -1, y: 0, o: 'r' },
@@ -120,7 +120,7 @@ function createMazeWalls(x, y, u, d, l, r) {
 		walls.push({
 			top,
 			left,
-			width: wallWidth,
+			width: wallHeight,
 			height: singleCellSize,
 		});
 	}
@@ -129,8 +129,8 @@ function createMazeWalls(x, y, u, d, l, r) {
 		walls.push({
 			top: top + singleCellSize,
 			left,
-			width: singleCellSize + wallWidth,
-			height: wallWidth,
+			width: singleCellSize + wallHeight,
+			height: wallHeight,
 		});
 	}
 
@@ -156,8 +156,8 @@ function displayMaze() {
 	}
 }
 
-// check if Santa can move vertically
-function checkVerticalWall(dir) {
+// Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return fall
+function checkWall(dir, isVertical) {
 	const x = santa.offsetLeft;
 	const y = santa.offsetTop;
 	const maxLen = Math.max(wallLeftCoords.length, wallRightCoords.length, wallTopCoords.length, wallBotCoords.length);
@@ -167,14 +167,14 @@ function checkVerticalWall(dir) {
 	for (let i = 0; i < maxLen; i++) {
 		check = 0;
 
-		if (x < wallLeftCoords[i] || x > wallRightCoords[i] - singleCellSize) check = 1;
-
-		if (dir === "u") {
-			if (y < wallTopCoords[i] || y > wallBotCoords[i]) check = 1;
-		}
-
-		if (dir === "d") {
-			if (y < wallTopCoords[i] - singleCellSize || y > wallBotCoords[i] - singleCellSize) check = 1;
+		if (isVertical) {
+			if (x < wallLeftCoords[i] || x > wallRightCoords[i] - singleCellSize) check = 1;
+			if (dir === "u" && (y < wallTopCoords[i] || y > wallBotCoords[i])) check = 1;
+			if (dir === "d" && (y < wallTopCoords[i] - singleCellSize || y > wallBotCoords[i] - singleCellSize)) check = 1;
+		} else {
+			if (y < wallTopCoords[i] || y > wallBotCoords[i] - singleCellSize) check = 1;
+			if (dir === "l" && (x < wallLeftCoords[i] || x > wallRightCoords[i])) check = 1;
+			if (dir === "r" && (x < wallLeftCoords[i] - singleCellSize || x > wallRightCoords[i] - singleCellSize)) check = 1;
 		}
 
 		canMove.push(check);
@@ -183,31 +183,14 @@ function checkVerticalWall(dir) {
 	return canMove.every(check => check === 1);
 }
 
-// check if Santa can move horizontally
+// Check if Santa can move vertically
+function checkVerticalWall(dir) {
+    return checkWall(dir, true);
+}
+
+// Check if Santa can move horizontally
 function checkHorizontalWall(dir) {
-	const x = santa.offsetLeft;
-	const y = santa.offsetTop;
-	const maxLen = Math.max(wallLeftCoords.length, wallRightCoords.length, wallTopCoords.length, wallBotCoords.length);
-	const canMove = [];
-	let check;
-
-	for (let i = 0; i < maxLen; i++) {
-		check = 0;
-
-		if (y < wallTopCoords[i] || y > wallBotCoords[i] - singleCellSize) check = 1;
-
-		if (dir === "l") {
-			if (x < wallLeftCoords[i] || x > wallRightCoords[i]) check = 1;
-		}
-
-		if (dir === "r") {
-			if (x < wallLeftCoords[i] - singleCellSize || x > wallRightCoords[i] - singleCellSize) check = 1;
-		}
-
-		canMove.push(check);
-	}
-
-	return canMove.every(check => check === 1);
+    return checkWall(dir, false);
 }
 
 function up() {
@@ -251,7 +234,7 @@ function handleKeyboardInput(e) {
 	}
 }
 
-window.onload = () => initializeOuterWalls(); // initialize walls when page is done loading
+window.onload = () => initializeOuterWalls(); // Initialize walls when page is done loading
 initializeGrid();
 createVerticalBoundaries();
 generateRandomMaze(0, 0);

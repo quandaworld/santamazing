@@ -1,7 +1,13 @@
+:root {
+	--grid-color: red;
+	--font-color: #0E2F58;
+	--background-color: #f9f6ee;
+}
+
 * {
-  box-sizing: border-box; 
+	box-sizing: border-box;
 	margin: 0;
-  padding: 0;
+	padding: 0;
 }
 
 body {
@@ -10,6 +16,12 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	min-height: 100dvh;
+	background-color: var(--background-color);
+}
+
+header {
+	color: var(--font-color);
+	margin-top: 10px;
 }
 
 #maze {
@@ -33,10 +45,10 @@ body {
 
 .wall {
 	position: absolute;
-	background: red;
+	background: var(--grid-color);
 }
 
-#top, 
+#top,
 #bottom {
 	height: 2px;
 }
@@ -51,4 +63,9 @@ body {
 	top: 320px;
 	left: 20px;
 	width: 302px;
+}
+
+footer {
+	color: var(--font-color);
+	margin-bottom: 5px;
 }
