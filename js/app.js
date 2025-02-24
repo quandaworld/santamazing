@@ -217,6 +217,10 @@ function right() {
 	if (checkHorizontalWall('r')) {
 		santa.style.left = santa.offsetLeft + singleCellSize + 'px';
 	}
+
+	if (santa.offsetLeft > gridWidth) {
+		displayWin();
+	}
 }
 
 function handleKeyboardInput(e) {
