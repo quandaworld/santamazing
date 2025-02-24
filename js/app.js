@@ -109,7 +109,7 @@ function generateRandomMaze(currentX, currentY) {
 	}
 }
 
-// helper method for displayMaze
+// Create maze's internal walls
 function createMazeWalls(x, y, u, d, l, r) {
 	const top = (y + 1) * singleWallSize;
 	const left = (x + 1) * singleWallSize;
@@ -142,7 +142,7 @@ function createMazeWalls(x, y, u, d, l, r) {
 	});
 }
 
-// Draw maze
+// Display maze
 function displayMaze() {
 	for (let x = 0; x < totalGridCols; x++) {
 		for (let y = 0; y < totalGridRows; y++) {
@@ -156,12 +156,12 @@ function displayMaze() {
 	}
 }
 
-//check if one can move horizontally
+//check if Santa can move horizontally
 function checkXWall(direction) {
 
 }
 
-// check if one can move vertically
+// check if Santa can move vertically
 function checkYWall(direction) {
 
 }
