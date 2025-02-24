@@ -1,0 +1,54 @@
+* {
+  box-sizing: border-box; 
+	margin: 0;
+  padding: 0;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 100dvh;
+}
+
+#maze {
+	position: absolute;
+	width: 340px;
+	height: 340px;
+	top: 50vh;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#santa,
+#exit {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+	display: flex;
+	place-items: center;
+}
+
+.wall {
+	position: absolute;
+	background: red;
+}
+
+#top, 
+#bottom {
+	height: 2px;
+}
+
+#top {
+	top: 20px;
+	left: 20px;
+	width: 300px;
+}
+
+#bottom {
+	top: 320px;
+	left: 20px;
+	width: 302px;
+}
