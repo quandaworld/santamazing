@@ -60,11 +60,41 @@ function createVerticalBoundaries() {
 	];
 
 	// Store wall coordinates
-	wallCoords.lefts.push(0, rightWall_x, 0, 0, rightWall_x, rightWall_x);
-	wallCoords.rights.push(wallHeight, rightWall_x + wallHeight, singleCellSize, singleCellSize, rightWall_x, rightWall_x);
-	wallCoords.tops.push(topHeight + singleCellSize, botHeight + singleCellSize, topHeight + singleCellSize,
-		topHeight + 2 * singleCellSize, botHeight + singleCellSize, botHeight + 2 * singleCellSize);
-	wallCoords.bottoms.push(...wallCoords.tops.map(coord => coord + wallHeight));
+	wallCoords.lefts.push(
+		0, 
+		gridWidth + 2 * singleCellSize, 
+		0, 
+		0, 
+		rightWall_x, 
+		rightWall_x
+	);
+
+	wallCoords.rights.push(
+		wallHeight, 
+		gridWidth + 2 * singleCellSize + wallHeight, 
+		singleCellSize, 
+		singleCellSize, 
+		gridWidth + 2 * singleCellSize, 
+		gridWidth + 2 * singleCellSize
+	);
+
+	wallCoords.tops.push(
+		topHeight + singleCellSize, 
+		botHeight + singleCellSize, 
+		topHeight + singleCellSize,
+		topHeight + 2 * singleCellSize, 
+		botHeight + singleCellSize, 
+		botHeight + 2 * singleCellSize
+	);
+
+	wallCoords.bottoms.push(
+		topHeight + singleCellSize * 2, 
+		botHeight + singleCellSize * 2, 
+		topHeight + singleCellSize + wallHeight,
+		topHeight + 2 * singleCellSize + wallHeight, 
+		botHeight + singleCellSize + wallHeight, 
+		botHeight + 2 * singleCellSize + wallHeight
+	);
 
 	// Set Santa entry & exit position
 	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
