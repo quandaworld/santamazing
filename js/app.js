@@ -87,7 +87,7 @@ function shuffleArr(arr) {
 
 // Populate a maze using Recursive Backtracking
 function generateRandomMaze(currentX, currentY) {
-	const directions = shuffleArr(['u', 'd', 'l', 'r']); // up, down, left, right
+	const dirs = shuffleArr(['u', 'd', 'l', 'r']); // up, down, left, right
 	const dirsCoords = { // directions' coordinates x, y, opposite
 		u: { x: 0, y: -1, o: 'd' },
 		d: { x: 0, y: 1, o: 'u' },
@@ -95,15 +95,15 @@ function generateRandomMaze(currentX, currentY) {
 		r: { x: 1, y: 0, o: 'l' }
 	};
 
-	for (let i = 0; i < directions.length; i++) {
-		const newX = currentX + dirsCoords[directions[i]].x;
-		const newY = currentY + dirsCoords[directions[i]].y;
+	for (let i = 0; i < dirs.length; i++) {
+		const newX = currentX + dirsCoords[dirs[i]].x;
+		const newY = currentY + dirsCoords[dirs[i]].y;
 
 		gridArr[currentY][currentX].v = 1;
 
 		if (newX >= 0 && newX < totalGridCols && newY >= 0 && newY < totalGridRows && gridArr[newY][newX].v === 0) {
-			gridArr[currentY][currentX][directions[i]] = 1;
-			gridArr[newY][newX][dirsCoords[directions[i]].o] = 1;
+			gridArr[currentY][currentX][dirs[i]] = 1;
+			gridArr[newY][newX][dirsCoords[dirs[i]].o] = 1;
 			generateRandomMaze(newX, newY);
 		}
 	}
@@ -156,15 +156,35 @@ function displayMaze() {
 	}
 }
 
-//check if Santa can move horizontally
-function checkXWall(direction) {
+// check if Santa can move horizontally
+function checkHorizontalWall(dir) {
+	const x = santa.offsetLeft;
+	const y = santa.offsetTop;
+	const maxLen = Math.max(wallLeftCoords.length, wallRightCoords.length, wallTopCoords.length, wallBotCoords.length);
+	const canMove = [];
+	let check;
 
+	for (let i = 0; i < maxLen; i++) {
+		check = 0;
+
+		if (y < wallTopCoords[i] || y > wallBotCoords[i] - singleWallSize) check = 1;
+
+		if (dir === "r") {
+			if (x < wallLeftCoords[i] - singleWallSize || x > wallRightCoords[i] - singleWallSize) check = 1;
+		}
+
+		if (dir === "l") {
+			if (x < wallLeftCoords[i] || x > wallRightCoords[i]) check = 1;
+		}
+
+		canMove.push(check);
+	}
+
+	return canMove.every(check => check === 1);
 }
 
 // check if Santa can move vertically
-function checkYWall(direction) {
 
-}
 
 function up() {
 	if (checkYWall('u')) {
@@ -179,18 +199,16 @@ function down() {
 }
 
 function left() {
-	if (checkXWall('l')) {
+	if (checkHorizontalWall('l')) {
 		santa.style.left = santa.offsetLeft - singleWallSize + 'px';
 	}
 }
 
 function right() {
-	if (checkXWall('r')) {
+	if (checkHorizontalWall('r')) {
 		santa.style.left = santa.offsetLeft + singleWallSize + 'px';
 	}
 }
-
-
 
 function handleKeyboardInput(e) {
 	switch (e.key) {
