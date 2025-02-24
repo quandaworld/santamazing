@@ -19,7 +19,7 @@ const maze = document.getElementById('maze');
 const santa = document.getElementById('santa');
 const exit = document.getElementById('exit');
 const walls = document.getElementsByClassName('wall');
-const wallHeight = document.getElementById('top').clientHeight;
+const wallHeight = document.getElementById('top').clientHeight; // top and bottom walls height
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -59,7 +59,23 @@ function createVerticalBoundaries() {
 		{ t: botHeight + 2 * singleCellSize, l: rightWall_x, h: topHeight }
 	];
 
-	// Store wall coordinates
+	// Set Santa entry & exit position
+	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
+	Object.assign(exit.style, { top: `${botHeight + singleCellSize}px`, left: `${rightWall_x}px` });
+
+	// Create boundaries
+	boundaries.forEach(({ t, l, h }) => {
+		const wall = document.createElement('div');
+		Object.assign(wall.style, { top: `${t}px`, left: `${l}px`, height: `${h}px`, width: `${wallHeight}px` });
+		wall.classList.add('wall');
+		maze.appendChild(wall);
+	});
+
+	updateWallCoords(topHeight, botHeight, rightWall_x);
+}
+
+// Helper method for createVerticalBoundaries()
+function updateWallCoords(topHeight, botHeight, rightWall_x) {
 	wallCoords.lefts.push(
 		0, 
 		gridWidth + 2 * singleCellSize, 
@@ -95,18 +111,6 @@ function createVerticalBoundaries() {
 		botHeight + singleCellSize + wallHeight, 
 		botHeight + 2 * singleCellSize + wallHeight
 	);
-
-	// Set Santa entry & exit position
-	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
-	Object.assign(exit.style, { top: `${botHeight + singleCellSize}px`, left: `${rightWall_x}px` });
-
-	// Create boundaries
-	boundaries.forEach(({ t, l, h }) => {
-		const wall = document.createElement('div');
-		Object.assign(wall.style, { top: `${t}px`, left: `${l}px`, height: `${h}px`, width: `${wallHeight}px` });
-		wall.classList.add('wall');
-		maze.appendChild(wall);
-	});
 }
 
 // Helper method for generateRandomMaze()
