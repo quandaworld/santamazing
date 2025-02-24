@@ -1,9 +1,9 @@
 /*-------------------------------- Constants --------------------------------*/
-const singleWallSize = 20;
+const singleCellSize = 20;
 const mazeHeight = 300;
 const mazeWidth = 300;
-const totalGridRows = mazeHeight / singleWallSize; // 15
-const totalGridCols = mazeWidth / singleWallSize; // 15
+const totalGridRows = mazeHeight / singleCellSize; // 15
+const totalGridCols = mazeWidth / singleCellSize; // 15
 const gridArr = [];
 const wallLeftCoords = [];
 const wallRightCoords = [];
@@ -44,27 +44,27 @@ function initializeGrid() {
 
 // Create maze's vertical boundaries with random entry and exit gaps
 function createVerticalBoundaries() {
-	const topHeight = Math.floor(Math.random() * totalGridRows) * singleWallSize;
-	const botHeight = mazeHeight - singleWallSize - topHeight;
-	const rightWall_x = mazeWidth + singleWallSize;
+	const topHeight = Math.floor(Math.random() * totalGridRows) * singleCellSize;
+	const botHeight = mazeHeight - singleCellSize - topHeight;
+	const rightWall_x = mazeWidth + singleCellSize;
 
 	const walls = [
-		{ t: singleWallSize, l: singleWallSize, h: topHeight },
-		{ t: topHeight + 2 * singleWallSize, l: singleWallSize, h: botHeight },
-		{ t: singleWallSize, l: rightWall_x, h: botHeight },
-		{ t: botHeight + 2 * singleWallSize, l: rightWall_x, h: topHeight }
+		{ t: singleCellSize, l: singleCellSize, h: topHeight },
+		{ t: topHeight + 2 * singleCellSize, l: singleCellSize, h: botHeight },
+		{ t: singleCellSize, l: rightWall_x, h: botHeight },
+		{ t: botHeight + 2 * singleCellSize, l: rightWall_x, h: topHeight }
 	];
 
 	// Store wall coordinates
 	wallLeftCoords.push(0, rightWall_x, 0, 0, rightWall_x, rightWall_x);
-	wallRightCoords.push(wallWidth, rightWall_x + wallWidth, singleWallSize, singleWallSize, rightWall_x, rightWall_x);
-	wallTopCoords.push(topHeight + singleWallSize, botHeight + singleWallSize, topHeight + singleWallSize,
-		topHeight + 2 * singleWallSize, botHeight + singleWallSize, botHeight + 2 * singleWallSize);
+	wallRightCoords.push(wallWidth, rightWall_x + wallWidth, singleCellSize, singleCellSize, rightWall_x, rightWall_x);
+	wallTopCoords.push(topHeight + singleCellSize, botHeight + singleCellSize, topHeight + singleCellSize,
+		topHeight + 2 * singleCellSize, botHeight + singleCellSize, botHeight + 2 * singleCellSize);
 	wallBotCoords.push(...wallTopCoords.map(coord => coord + wallWidth));
 
 	// Set Santa entry & exit position
-	Object.assign(santa.style, { top: `${topHeight + singleWallSize}px`, left: '0px' });
-	Object.assign(exit.style, { top: `${botHeight + singleWallSize}px`, left: `${rightWall_x}px` });
+	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
+	Object.assign(exit.style, { top: `${botHeight + singleCellSize}px`, left: `${rightWall_x}px` });
 
 	// Create walls
 	walls.forEach(({ t, l, h }) => {
@@ -111,8 +111,8 @@ function generateRandomMaze(currentX, currentY) {
 
 // Create maze's internal walls
 function createMazeWalls(x, y, u, d, l, r) {
-	const top = (y + 1) * singleWallSize;
-	const left = (x + 1) * singleWallSize;
+	const top = (y + 1) * singleCellSize;
+	const left = (x + 1) * singleCellSize;
 
 	const walls = [];
 
@@ -121,15 +121,15 @@ function createMazeWalls(x, y, u, d, l, r) {
 			top,
 			left,
 			width: wallWidth,
-			height: singleWallSize,
+			height: singleCellSize,
 		});
 	}
 
 	if (d === 0 && y < totalGridRows - 1) {
 		walls.push({
-			top: top + singleWallSize,
+			top: top + singleCellSize,
 			left,
-			width: singleWallSize + wallWidth,
+			width: singleCellSize + wallWidth,
 			height: wallWidth,
 		});
 	}
@@ -156,6 +156,33 @@ function displayMaze() {
 	}
 }
 
+// check if Santa can move vertically
+function checkVerticalWall(dir) {
+	const x = santa.offsetLeft;
+	const y = santa.offsetTop;
+	const maxLen = Math.max(wallLeftCoords.length, wallRightCoords.length, wallTopCoords.length, wallBotCoords.length);
+	const canMove = [];
+	let check;
+
+	for (let i = 0; i < maxLen; i++) {
+		check = 0;
+
+		if (x < wallLeftCoords[i] || x > wallRightCoords[i] - singleCellSize) check = 1;
+
+		if (dir === "u") {
+			if (y < wallTopCoords[i] || y > wallBotCoords[i]) check = 1;
+		}
+
+		if (dir === "d") {
+			if (y < wallTopCoords[i] - singleCellSize || y > wallBotCoords[i] - singleCellSize) check = 1;
+		}
+
+		canMove.push(check);
+	}
+
+	return canMove.every(check => check === 1);
+}
+
 // check if Santa can move horizontally
 function checkHorizontalWall(dir) {
 	const x = santa.offsetLeft;
@@ -167,14 +194,14 @@ function checkHorizontalWall(dir) {
 	for (let i = 0; i < maxLen; i++) {
 		check = 0;
 
-		if (y < wallTopCoords[i] || y > wallBotCoords[i] - singleWallSize) check = 1;
-
-		if (dir === "r") {
-			if (x < wallLeftCoords[i] - singleWallSize || x > wallRightCoords[i] - singleWallSize) check = 1;
-		}
+		if (y < wallTopCoords[i] || y > wallBotCoords[i] - singleCellSize) check = 1;
 
 		if (dir === "l") {
 			if (x < wallLeftCoords[i] || x > wallRightCoords[i]) check = 1;
+		}
+
+		if (dir === "r") {
+			if (x < wallLeftCoords[i] - singleCellSize || x > wallRightCoords[i] - singleCellSize) check = 1;
 		}
 
 		canMove.push(check);
@@ -183,30 +210,27 @@ function checkHorizontalWall(dir) {
 	return canMove.every(check => check === 1);
 }
 
-// check if Santa can move vertically
-
-
 function up() {
-	if (checkYWall('u')) {
-		santa.style.top = santa.offsetTop - singleWallSize + 'px';
+	if (checkVerticalWall('u')) {
+		santa.style.top = santa.offsetTop - singleCellSize + 'px';
 	}
 }
 
 function down() {
-	if (checkYWall('d')) {
-		santa.style.top = santa.offsetTop + singleWallSize + 'px';
+	if (checkVerticalWall('d')) {
+		santa.style.top = santa.offsetTop + singleCellSize + 'px';
 	}
 }
 
 function left() {
 	if (checkHorizontalWall('l')) {
-		santa.style.left = santa.offsetLeft - singleWallSize + 'px';
+		santa.style.left = santa.offsetLeft - singleCellSize + 'px';
 	}
 }
 
 function right() {
 	if (checkHorizontalWall('r')) {
-		santa.style.left = santa.offsetLeft + singleWallSize + 'px';
+		santa.style.left = santa.offsetLeft + singleCellSize + 'px';
 	}
 }
 
