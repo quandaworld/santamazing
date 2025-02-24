@@ -1,14 +1,16 @@
 /*-------------------------------- Constants --------------------------------*/
 const singleCellSize = 20;
-const mazeHeight = 300;
-const mazeWidth = 300;
-const totalGridRows = mazeHeight / singleCellSize; // 15
-const totalGridCols = mazeWidth / singleCellSize; // 15
+const gridHeight = 300;
+const gridWidth = 300;
+const totalGridRows = gridHeight / singleCellSize; // 15
+const totalGridCols = gridWidth / singleCellSize; // 15
 const gridArr = [];
-const wallLeftCoords = [];
-const wallRightCoords = [];
-const wallTopCoords = [];
-const wallBotCoords = [];
+const wallCoords = {
+	tops: [],
+	bottoms: [],
+	lefts: [],
+	rights: [],
+}
 
 /*------------------------ Cached Element References ------------------------*/
 const maze = document.getElementById('maze');
@@ -22,10 +24,10 @@ const wallHeight = document.getElementById('top').clientHeight;
 // Populate grid's outer walls
 function initializeOuterWalls() {
 	for (let i = 0; i < walls.length; i++) {
-		wallLeftCoords.push(walls[i].offsetLeft);
-		wallRightCoords.push(walls[i].offsetLeft + walls[i].clientWidth);
-		wallTopCoords.push(walls[i].offsetTop);
-		wallBotCoords.push(walls[i].offsetTop + walls[i].clientHeight);
+		wallCoords.lefts.push(walls[i].offsetLeft);
+		wallCoords.rights.push(walls[i].offsetLeft + walls[i].clientWidth);
+		wallCoords.tops.push(walls[i].offsetTop);
+		wallCoords.bottoms.push(walls[i].offsetTop + walls[i].clientHeight);
 	}
 }
 
@@ -45,8 +47,8 @@ function initializeGrid() {
 // Create maze's vertical boundaries with random entry and exit gaps
 function createVerticalBoundaries() {
 	const topHeight = Math.floor(Math.random() * totalGridRows) * singleCellSize;
-	const botHeight = mazeHeight - singleCellSize - topHeight;
-	const rightWall_x = mazeWidth + singleCellSize;
+	const botHeight = gridHeight - singleCellSize - topHeight;
+	const rightWall_x = gridWidth + singleCellSize;
 
 	const boundaries = [
 		{ t: singleCellSize, l: singleCellSize, h: topHeight },
@@ -56,11 +58,11 @@ function createVerticalBoundaries() {
 	];
 
 	// Store wall coordinates
-	wallLeftCoords.push(0, rightWall_x, 0, 0, rightWall_x, rightWall_x);
-	wallRightCoords.push(wallHeight, rightWall_x + wallHeight, singleCellSize, singleCellSize, rightWall_x, rightWall_x);
-	wallTopCoords.push(topHeight + singleCellSize, botHeight + singleCellSize, topHeight + singleCellSize,
+	wallCoords.lefts.push(0, rightWall_x, 0, 0, rightWall_x, rightWall_x);
+	wallCoords.rights.push(wallHeight, rightWall_x + wallHeight, singleCellSize, singleCellSize, rightWall_x, rightWall_x);
+	wallCoords.tops.push(topHeight + singleCellSize, botHeight + singleCellSize, topHeight + singleCellSize,
 		topHeight + 2 * singleCellSize, botHeight + singleCellSize, botHeight + 2 * singleCellSize);
-	wallBotCoords.push(...wallTopCoords.map(coord => coord + wallHeight));
+	wallCoords.bottoms.push(...wallCoords.tops.map(coord => coord + wallHeight));
 
 	// Set Santa entry & exit position
 	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
@@ -85,7 +87,7 @@ function shuffleArr(arr) {
 	return arr;
 }
 
-// Populate a maze using Recursive Backtracking
+// Carve out a random maze using recursion
 function generateRandomMaze(currentX, currentY) {
 	const dirs = shuffleArr(['u', 'd', 'l', 'r']); // up, down, left, right
 	const dirsCoords = { // Directions' coordinates x, y, opposite
@@ -146,10 +148,10 @@ function createMazeWalls(x, y, u, d, l, r) {
 function displayMaze() {
 	for (let x = 0; x < totalGridCols; x++) {
 		for (let y = 0; y < totalGridRows; y++) {
-			const l = gridArr[y][x].l;
-			const r = gridArr[y][x].r;
 			const u = gridArr[y][x].u;
 			const d = gridArr[y][x].d;
+			const l = gridArr[y][x].l;
+			const r = gridArr[y][x].r;
 
 			createMazeWalls(x, y, u, d, l, r);
 		}
@@ -160,27 +162,27 @@ function displayMaze() {
 function checkWall(dir, isVertical) {
 	const x = santa.offsetLeft;
 	const y = santa.offsetTop;
-	const maxLen = Math.max(wallLeftCoords.length, wallRightCoords.length, wallTopCoords.length, wallBotCoords.length);
-	const canMove = [];
+	const maxLen = Math.max(wallCoords.lefts.length, wallCoords.rights.length, wallCoords.tops.length, wallCoords.bottoms.length);
+	const wallChecks = [];
 	let check;
 
 	for (let i = 0; i < maxLen; i++) {
-		check = 0;
+		check = 0; // 0 is wall, 1 is no wall
 
 		if (isVertical) {
-			if (x < wallLeftCoords[i] || x > wallRightCoords[i] - singleCellSize) check = 1;
-			if (dir === "u" && (y < wallTopCoords[i] || y > wallBotCoords[i])) check = 1;
-			if (dir === "d" && (y < wallTopCoords[i] - singleCellSize || y > wallBotCoords[i] - singleCellSize)) check = 1;
+			if (x < wallCoords.lefts[i] || x > wallCoords.rights[i] - singleCellSize) check = 1;
+			if (dir === "u" && (y < wallCoords.tops[i] || y > wallCoords.bottoms[i])) check = 1;
+			if (dir === "d" && (y < wallCoords.tops[i] - singleCellSize || y > wallCoords.bottoms[i] - singleCellSize)) check = 1;
 		} else {
-			if (y < wallTopCoords[i] || y > wallBotCoords[i] - singleCellSize) check = 1;
-			if (dir === "l" && (x < wallLeftCoords[i] || x > wallRightCoords[i])) check = 1;
-			if (dir === "r" && (x < wallLeftCoords[i] - singleCellSize || x > wallRightCoords[i] - singleCellSize)) check = 1;
+			if (y < wallCoords.tops[i] || y > wallCoords.bottoms[i] - singleCellSize) check = 1;
+			if (dir === "l" && (x < wallCoords.lefts[i] || x > wallCoords.rights[i])) check = 1;
+			if (dir === "r" && (x < wallCoords.lefts[i] - singleCellSize || x > wallCoords.rights[i] - singleCellSize)) check = 1;
 		}
 
-		canMove.push(check);
+		wallChecks.push(check);
 	}
 
-	return canMove.every(check => check === 1);
+	return wallChecks.every(check => check === 1);
 }
 
 // Check if Santa can move vertically
