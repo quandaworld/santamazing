@@ -19,15 +19,15 @@ const wallWidth = document.getElementById('top').clientHeight;
 
 /*-------------------------------- Functions --------------------------------*/
 
-// Populate grid's walls when the page is done loading
-window.onload = () => {
+// Populate grid's outer walls
+function initializeOuterWalls() {
 	for (let i = 0; i < walls.length; i++) {
 		wallLeftCoords.push(walls[i].offsetLeft);
 		wallRightCoords.push(walls[i].offsetLeft + walls[i].clientWidth);
 		wallTopCoords.push(walls[i].offsetTop);
 		wallBotCoords.push(walls[i].offsetTop + walls[i].clientHeight);
 	}
-};
+}
 
 // Populate grid array structure with rows and columns
 function initializeGrid() {
@@ -251,6 +251,7 @@ function handleKeyboardInput(e) {
 	}
 }
 
+window.onload = () => initializeOuterWalls(); // initialize walls when page is done loading
 initializeGrid();
 createVerticalBoundaries();
 generateRandomMaze(0, 0);
