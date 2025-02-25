@@ -56,7 +56,11 @@ ul {
 }
 
 #santa,
-#exit {
+#exit,
+#cookie,
+#clock,
+#kid,
+#key {
 	position: absolute;
 	width: 20px;
 	height: 20px;
