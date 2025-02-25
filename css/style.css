@@ -36,10 +36,10 @@ header {
 }
 
 #side-boards {
-	min-height: 50dvh;
+	justify-self: center;
 	display: flex;
 	gap: 120dvh;
-	color: var(--font-color)
+	color: var(--font-color);
 }
 
 ul {
@@ -98,8 +98,7 @@ ul {
   gap: 20px;
 }
 
-#restart,
-#play {
+button {
 	color: var(--font-color);
 	border: 1px solid var(--font-color);
 	cursor: pointer;
@@ -109,8 +108,7 @@ ul {
   background-color: var(--background-color);
 }
 
-#restart:hover,
-#play:hover {
+button:hover {
   background-color: var(--font-color);
 	color: var(--background-color);
 }
