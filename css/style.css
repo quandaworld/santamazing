@@ -25,15 +25,26 @@ body {
 header {
 	color: var(--font-color);
 	margin-top: 10px;
-	font-size: x-large;
+	font-size: 1.5rem;
 }
 
 #timer {
 	position: absolute;
-	margin-top: 80px;
+	margin-top: 75px;
 	color: var(--font-color);
+	font-size: 1.2rem;
 }
 
+#side-boards {
+	min-height: 50dvh;
+	display: flex;
+	gap: 120dvh;
+	color: var(--font-color)
+}
+
+ul {
+	list-style-type: none;
+}
 #maze {
 	position: absolute;
 	width: 340px;
