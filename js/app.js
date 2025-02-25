@@ -16,7 +16,7 @@ const wallCoords = {
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let totalTime = 3; // 30 seconds
+let totalTime = 50; // 30 seconds
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -29,8 +29,8 @@ const wallHeight = document.getElementById('top').clientHeight; // top and botto
 const restartBtn = document.getElementById('restart');
 const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
-const timerDiv = document.getElementById('timer');
-
+const timeEl = document.getElementById('time');
+const resultDiv = document.getElementById('result');
 
 /*-------------------------------- Grid Manipulations --------------------------------*/
 
@@ -208,26 +208,23 @@ function displayMaze() {
 
 /*-------------------------------- Other DOM Components --------------------------------*/
 
-// Update page UI when Santa arrives final destination
-function displayWin() {
-	if (checkGameStatus() === 'You Win') {
-		timerDiv.innerText = "Mission Accomplished!";
-		santa.innerText = "";
-		exit.innerText = "🎉";
-	}
-}
+// Update page UI when game ends
+function displayResult() {
+	document.getElementById('maze').style.filter = 'blur(5px)'; // Blurs entire grid & walls
+	resultDiv.classList.add('show');
+	playBtn.classList.add('hide');
+	restartBtn.classList.add('hide');
+	playAgainBtn.classList.add('show');
 
-// Update page UI play lose
-function displayLose() {
-	if (checkGameStatus() === 'Game Over') {
-		timerDiv.innerText = "Time's Up!";
-		playBtn.classList.add('hide');
-		restartBtn.classList.add('hide');
-		playAgainBtn.classList.add('show');
-
-		// Remove keyboard events so player can no longer play, but currently it also removes Enter key
-		document.removeEventListener('keydown', handleKeyboardInput);
+	if (checkGameStatus() === 'win') {
+		santa.innerText = '';
+		exit.innerText = '🎉';
+		resultDiv.innerText = 'Mission Accomplished!';
+	} else if (checkGameStatus() === 'lose') {
+		resultDiv.innerText = "Time's Up!";
 	}
+
+	document.removeEventListener('keydown', handleKeyboardInput);
 }
 
 // Update top scorers board with localStorage
@@ -285,11 +282,11 @@ function checkHorizontalWall(dir) {
 // Start and reset timer
 function runTimer(){ // timer size gets smaller as timer runs why?
 	const timer = setInterval(() => {
-			timerDiv.innerText = '00:' + String(totalTime).padStart(2, '0');			
+			timeEl.innerText = '00:' + String(totalTime).padStart(2, '0');			
 			totalTime--;
 			if (totalTime < 0) {
 				clearInterval(timer);
-				displayLose();
+				displayResult();
 			}
 	}, 1000);
 }
@@ -301,8 +298,8 @@ function updateTimer() {
 
 // Return game status
 function checkGameStatus() {
-	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "Game Over";
-	if (totalTime <= 30 && santa.offsetLeft > gridWidth) return "You Win";
+	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "lose";
+	if (totalTime <= 60 && santa.offsetLeft > gridWidth) return "win";
 }
 
 
@@ -332,7 +329,7 @@ function right() {
 	}
 
 	if (santa.offsetLeft > gridWidth) {
-		displayWin();
+		displayResult();
 	}
 }
 
