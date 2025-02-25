@@ -1,4 +1,5 @@
 /*-------------------------------- Constants --------------------------------*/
+
 const singleCellSize = 20;
 const gridHeight = 300;
 const gridWidth = 300;
@@ -12,16 +13,26 @@ const wallCoords = {
 	rights: [],
 }
 
+
 /*---------------------------- Variables (state) ----------------------------*/
 
+let totalTime = 3; // 30 seconds
+
+
 /*------------------------ Cached Element References ------------------------*/
+
 const maze = document.getElementById('maze');
 const santa = document.getElementById('santa');
 const exit = document.getElementById('exit');
 const walls = document.getElementsByClassName('wall');
 const wallHeight = document.getElementById('top').clientHeight; // top and bottom walls height
+const restartBtn = document.getElementById('restart');
+const playBtn = document.getElementById('play');
+const playAgainBtn = document.getElementById('play-again');
+const timerDiv = document.getElementById('timer');
 
-/*-------------------------------- Functions --------------------------------*/
+
+/*-------------------------------- Grid Manipulations --------------------------------*/
 
 // Populate grid's outer walls
 function initializeOuterWalls() {
@@ -67,7 +78,7 @@ function createVerticalBoundaries() {
 	boundaries.forEach(({ t, l, h }) => {
 		const wall = document.createElement('div');
 		Object.assign(wall.style, { top: `${t}px`, left: `${l}px`, height: `${h}px`, width: `${wallHeight}px` });
-		wall.classList.add('wall');
+		wall.classList.add('wall', 'extra');
 		maze.appendChild(wall);
 	});
 
@@ -175,7 +186,7 @@ function createMazeWalls(x, y, u, d, l, r) {
 	walls.forEach(({ top, left, width, height }) => {
 		const el = document.createElement('div');
 		Object.assign(el.style, { top: `${top}px`, left: `${left}px`, width: `${width}px`, height: `${height}px` });
-		el.classList.add('wall');
+		el.classList.add('wall', 'extra');
 		maze.appendChild(el);
 	});
 }
@@ -193,6 +204,83 @@ function displayMaze() {
 		}
 	}
 }
+
+
+/*-------------------------------- Other DOM Components --------------------------------*/
+
+// Update page UI when Santa arrives final destination
+function displayWin() {
+	if (checkGameStatus() === 'You Win') {
+		santa.innerText = "";
+		exit.innerText = "🎉";
+	}
+}
+
+// Update page UI play lose
+function displayLose() {
+	if (checkGameStatus() === 'Game Over') {
+		timerDiv.innerText = "Time's Up!";
+
+		// Remove keyboard events so player can no longer play, but currently it also removes Enter key
+		document.removeEventListener('keydown', handleKeyboardInput);
+	}
+}
+
+
+/*-------------------------------- Keyboard Events --------------------------------*/
+
+function up() {
+	if (checkVerticalWall('u')) {
+		santa.style.top = santa.offsetTop - singleCellSize + 'px';
+	}
+}
+
+function down() {
+	if (checkVerticalWall('d')) {
+		santa.style.top = santa.offsetTop + singleCellSize + 'px';
+	}
+}
+
+function left() {
+	if (checkHorizontalWall('l')) {
+		santa.style.left = santa.offsetLeft - singleCellSize + 'px';
+	}
+}
+
+function right() {
+	if (checkHorizontalWall('r')) {
+		santa.style.left = santa.offsetLeft + singleCellSize + 'px';
+	}
+
+	if (santa.offsetLeft > gridWidth) {
+		displayWin();
+	}
+}
+
+function handleKeyboardInput(e) {
+	switch (e.key) {
+		case 'ArrowUp':
+			up();
+			break;
+		case 'ArrowDown':
+			down();
+			break;
+		case 'ArrowLeft':
+			left();
+			break;
+		case 'ArrowRight':
+			right();
+			break;
+		case 'Enter':
+			if (!checkGameStatus()) {
+				startGame();
+			} else  {
+				restartGame();
+			}
+	}
+}
+
+/*-------------------------------- Game Logic --------------------------------*/
 
 // Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return fall
 function checkWall(dir, isVertical) {
@@ -231,58 +319,39 @@ function checkHorizontalWall(dir) {
     return checkWall(dir, false);
 }
 
-function up() {
-	if (checkVerticalWall('u')) {
-		santa.style.top = santa.offsetTop - singleCellSize + 'px';
-	}
+// Start and reset timer
+function runTimer(){ // timer size gets smaller as timer runs why?
+	const timer = setInterval(() => {
+			timerDiv.innerText = '00:' + String(totalTime).padStart(2, '0');			
+			totalTime--;
+			if (totalTime < 0) {
+				clearInterval(timer);
+				displayLose();
+			}
+	}, 1000);
 }
 
-function down() {
-	if (checkVerticalWall('d')) {
-		santa.style.top = santa.offsetTop + singleCellSize + 'px';
-	}
+// Return game status
+function checkGameStatus() {
+	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "Game Over";
+	if (totalTime <= 30 && santa.offsetLeft > gridWidth) return "You Win";
 }
 
-function left() {
-	if (checkHorizontalWall('l')) {
-		santa.style.left = santa.offsetLeft - singleCellSize + 'px';
-	}
+
+/*-------------------------------- Button Event Handlers --------------------------------*/
+
+// Event handler for start button
+function startGame() {
+	runTimer();
 }
 
-function right() {
-	if (checkHorizontalWall('r')) {
-		santa.style.left = santa.offsetLeft + singleCellSize + 'px';
-	}
-
-	if (santa.offsetLeft > gridWidth) {
-		displayWin();
-	}
+// Event handler for restart button
+function restartGame() {
+	window.location.reload();
 }
 
-// Update page UI when Santa arrives final destination
-function displayWin() {
-	if (santa.offsetLeft > gridWidth) {
-		santa.innerText = "";
-		exit.innerText = "🎉";
-	}
-}
 
-function handleKeyboardInput(e) {
-	switch (e.key) {
-		case 'ArrowUp':
-			up();
-			break;
-		case 'ArrowDown':
-			down();
-			break;
-		case 'ArrowLeft':
-			left();
-			break;
-		case 'ArrowRight':
-			right();
-			break;
-	}
-}
+/*-------------------------------- Page Populating Functions --------------------------------*/
 
 window.onload = () => initializeOuterWalls(); // Initialize walls when page is done loading
 initializeGrid();
@@ -290,5 +359,11 @@ createVerticalBoundaries();
 generateRandomMaze(0, 0);
 displayMaze();
 
+
 /*----------------------------- Event Listeners -----------------------------*/
+
 document.addEventListener('keydown', handleKeyboardInput);
+restartBtn.addEventListener('click', restartGame);
+playBtn.addEventListener('click', startGame);
+playAgainBtn.addEventListener('click', restartGame);
+
