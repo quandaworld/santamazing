@@ -15,17 +15,25 @@
     <h1>SANTAMAZING</h1>
   </header>
 
-  <div class='container'>
-    <div id="maze">
-      <div id="santa">🎅🏻</div>
-      <div id="exit">🎯</div>
-      <div class="wall" id="top"></div>
-      <div class="wall" id="bottom"></div>
-    </div>
-  </div>  
+  <div id="timer">
+    <h2>00:30</h2>
+  </div>
+
+  <div id="maze">
+    <div id="santa">🎅🏻</div>
+    <div id="exit">🎯</div>
+    <div class="wall" id="top"></div>
+    <div class="wall" id="bottom"></div>
+  </div>
+
+  <div class="game-btns">
+    <button id="restart">Restart Game</button>
+    <button id="next-game">Next Game</button>
+  </div>
 
   <footer>
-    Copyright &copy <script>document.write(new Date().getFullYear())</script>
+    Copyright &copy
+    <script>document.write(new Date().getFullYear())</script>
     <a href="https://github.com/quandaworld" target="_blank" style="text-decoration: none; color: inherit">
       <b>quandaworld </b><i class="fa-brands fa-github" style="font-size: 22px;"></i>
     </a>
