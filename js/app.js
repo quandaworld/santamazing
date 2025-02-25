@@ -221,6 +221,9 @@ function displayWin() {
 function displayLose() {
 	if (checkGameStatus() === 'Game Over') {
 		timerDiv.innerText = "Time's Up!";
+		playBtn.classList.add('hide');
+		restartBtn.classList.add('hide');
+		playAgainBtn.classList.add('show');
 
 		// Remove keyboard events so player can no longer play, but currently it also removes Enter key
 		document.removeEventListener('keydown', handleKeyboardInput);
