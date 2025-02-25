@@ -11,6 +11,7 @@
 	margin: 0;
 	padding: 0;
 	font-family: "Cherry Bomb One", serif;
+	color: var(--font-color);
 }
 
 body {
@@ -19,7 +20,7 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	min-height: 100dvh;
-	background-color: var(--background-color);
+	background-color: var(--background-color); /* to be removed */
 }
 
 header {
@@ -32,7 +33,6 @@ header {
 	position: absolute;
 	margin-top: 75px;
 	color: var(--font-color);
-	font-size: 1.2rem;
 }
 
 #side-boards {
@@ -85,6 +85,19 @@ ul {
 	top: 320px;
 	left: 20px;
 	width: 302px;
+}
+
+#result {
+  position: absolute;
+  inset: 0;
+  display: none;
+	justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+}
+
+#result.show {
+	display: flex;
 }
 
 .game-btns {
