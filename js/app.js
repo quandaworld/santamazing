@@ -16,7 +16,7 @@ const wallCoords = {
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let totalTime = 50; // 30 seconds
+let totalTime = 2; // 30 seconds
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -88,38 +88,38 @@ function createVerticalBoundaries() {
 // Helper method for createVerticalBoundaries()
 function updateWallCoords(topHeight, botHeight, rightWall_x) {
 	wallCoords.lefts.push(
-		0, 
-		gridWidth + 2 * singleCellSize, 
-		0, 
-		0, 
-		rightWall_x, 
+		0,
+		gridWidth + 2 * singleCellSize,
+		0,
+		0,
+		rightWall_x,
 		rightWall_x
 	);
 
 	wallCoords.rights.push(
-		wallHeight, 
-		gridWidth + 2 * singleCellSize + wallHeight, 
-		singleCellSize, 
-		singleCellSize, 
-		gridWidth + 2 * singleCellSize, 
+		wallHeight,
+		gridWidth + 2 * singleCellSize + wallHeight,
+		singleCellSize,
+		singleCellSize,
+		gridWidth + 2 * singleCellSize,
 		gridWidth + 2 * singleCellSize
 	);
 
 	wallCoords.tops.push(
-		topHeight + singleCellSize, 
-		botHeight + singleCellSize, 
 		topHeight + singleCellSize,
-		topHeight + 2 * singleCellSize, 
-		botHeight + singleCellSize, 
+		botHeight + singleCellSize,
+		topHeight + singleCellSize,
+		topHeight + 2 * singleCellSize,
+		botHeight + singleCellSize,
 		botHeight + 2 * singleCellSize
 	);
 
 	wallCoords.bottoms.push(
-		topHeight + singleCellSize * 2, 
-		botHeight + singleCellSize * 2, 
+		topHeight + singleCellSize * 2,
+		botHeight + singleCellSize * 2,
 		topHeight + singleCellSize + wallHeight,
-		topHeight + 2 * singleCellSize + wallHeight, 
-		botHeight + singleCellSize + wallHeight, 
+		topHeight + 2 * singleCellSize + wallHeight,
+		botHeight + singleCellSize + wallHeight,
 		botHeight + 2 * singleCellSize + wallHeight
 	);
 }
@@ -163,10 +163,10 @@ function createMazeWalls(x, y, u, d, l, r) {
 	const top = (y + 1) * singleCellSize;
 	const left = (x + 1) * singleCellSize;
 
-	const walls = [];
+	const innerWalls = [];
 
 	if (l === 0 && x > 0) {
-		walls.push({
+		innerWalls.push({
 			top,
 			left,
 			width: wallHeight,
@@ -175,7 +175,7 @@ function createMazeWalls(x, y, u, d, l, r) {
 	}
 
 	if (d === 0 && y < totalGridRows - 1) {
-		walls.push({
+		innerWalls.push({
 			top: top + singleCellSize,
 			left,
 			width: singleCellSize + wallHeight,
@@ -183,7 +183,7 @@ function createMazeWalls(x, y, u, d, l, r) {
 		});
 	}
 
-	walls.forEach(({ top, left, width, height }) => {
+	innerWalls.forEach(({ top, left, width, height }) => {
 		const el = document.createElement('div');
 		Object.assign(el.style, { top: `${top}px`, left: `${left}px`, width: `${width}px`, height: `${height}px` });
 		el.classList.add('wall', 'extra');
@@ -202,6 +202,28 @@ function displayMaze() {
 
 			createMazeWalls(x, y, u, d, l, r);
 		}
+	}
+}
+
+// Add emojis to maze
+function displayEmojis() {
+	const emojiMap = {
+		cookie: '🍪',
+		clock: '⏰',
+		kid: '👧🏻',
+		key: '🔑',
+	};
+
+	for (let emo in emojiMap) {
+		const randomX = (Math.floor(Math.random() * totalGridCols) + 1) * singleCellSize;
+		const randomY = (Math.floor(Math.random() * totalGridRows) + 1) * singleCellSize;
+		const emoji = document.createElement('div');
+		maze.appendChild(emoji);
+
+		emoji.setAttribute('id', emo);
+		emoji.style.left = `${randomX}px`;
+		emoji.style.top = `${randomY}px`;
+		emoji.innerText = emojiMap[emo];
 	}
 }
 
@@ -271,23 +293,23 @@ function checkWall(dir, isVertical) {
 
 // Check if Santa can move vertically
 function checkVerticalWall(dir) {
-    return checkWall(dir, true);
+	return checkWall(dir, true);
 }
 
 // Check if Santa can move horizontally
 function checkHorizontalWall(dir) {
-    return checkWall(dir, false);
+	return checkWall(dir, false);
 }
 
 // Start and reset timer
-function runTimer(){ // timer size gets smaller as timer runs why?
+function runTimer() {
 	const timer = setInterval(() => {
-			timeEl.innerText = '00:' + String(totalTime).padStart(2, '0');			
-			totalTime--;
-			if (totalTime < 0) {
-				clearInterval(timer);
-				displayResult();
-			}
+		timeEl.innerText = '00:' + String(totalTime).padStart(2, '0');
+		totalTime--;
+		if (totalTime < 0) {
+			clearInterval(timer);
+			displayResult();
+		}
 	}, 1000);
 }
 
@@ -350,7 +372,7 @@ function handleKeyboardInput(e) {
 		case 'Enter':
 			if (!checkGameStatus()) {
 				startGame();
-			} else  {
+			} else {
 				restartGame();
 			}
 	}
@@ -376,6 +398,7 @@ initializeGrid();
 createVerticalBoundaries();
 generateRandomMaze(0, 0);
 displayMaze();
+displayEmojis();
 
 
 /*----------------------------- Event Listeners -----------------------------*/
