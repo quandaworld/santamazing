@@ -211,6 +211,7 @@ function displayMaze() {
 // Update page UI when Santa arrives final destination
 function displayWin() {
 	if (checkGameStatus() === 'You Win') {
+		timerDiv.innerText = "Mission Accomplished!";
 		santa.innerText = "";
 		exit.innerText = "🎉";
 	}
@@ -224,6 +225,81 @@ function displayLose() {
 		// Remove keyboard events so player can no longer play, but currently it also removes Enter key
 		document.removeEventListener('keydown', handleKeyboardInput);
 	}
+}
+
+// Update top scorers board with localStorage
+function updateRecordBoard() {
+
+}
+
+
+/*-------------------------------- Audio Components --------------------------------*/
+
+// Play slow music when page is done loading and when game is over
+
+// Play fast music when player hit start, stop when game is over
+
+
+/*-------------------------------- Game Logic --------------------------------*/
+
+// Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return fall
+function checkWall(dir, isVertical) {
+	const x = santa.offsetLeft;
+	const y = santa.offsetTop;
+	const maxLen = Math.max(wallCoords.lefts.length, wallCoords.rights.length, wallCoords.tops.length, wallCoords.bottoms.length);
+	const wallChecks = [];
+	let check;
+
+	for (let i = 0; i < maxLen; i++) {
+		check = 0; // 0 is wall, 1 is no wall
+
+		if (isVertical) {
+			if (x < wallCoords.lefts[i] || x > wallCoords.rights[i] - singleCellSize) check = 1;
+			if (dir === "u" && (y < wallCoords.tops[i] || y > wallCoords.bottoms[i])) check = 1;
+			if (dir === "d" && (y < wallCoords.tops[i] - singleCellSize || y > wallCoords.bottoms[i] - singleCellSize)) check = 1;
+		} else {
+			if (y < wallCoords.tops[i] || y > wallCoords.bottoms[i] - singleCellSize) check = 1;
+			if (dir === "l" && (x < wallCoords.lefts[i] || x > wallCoords.rights[i])) check = 1;
+			if (dir === "r" && (x < wallCoords.lefts[i] - singleCellSize || x > wallCoords.rights[i] - singleCellSize)) check = 1;
+		}
+
+		wallChecks.push(check);
+	}
+
+	return wallChecks.every(check => check === 1);
+}
+
+// Check if Santa can move vertically
+function checkVerticalWall(dir) {
+    return checkWall(dir, true);
+}
+
+// Check if Santa can move horizontally
+function checkHorizontalWall(dir) {
+    return checkWall(dir, false);
+}
+
+// Start and reset timer
+function runTimer(){ // timer size gets smaller as timer runs why?
+	const timer = setInterval(() => {
+			timerDiv.innerText = '00:' + String(totalTime).padStart(2, '0');			
+			totalTime--;
+			if (totalTime < 0) {
+				clearInterval(timer);
+				displayLose();
+			}
+	}, 1000);
+}
+
+// Update timer as Santa hits different emojis
+function updateTimer() {
+
+}
+
+// Return game status
+function checkGameStatus() {
+	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "Game Over";
+	if (totalTime <= 30 && santa.offsetLeft > gridWidth) return "You Win";
 }
 
 
@@ -279,64 +355,6 @@ function handleKeyboardInput(e) {
 			}
 	}
 }
-
-/*-------------------------------- Game Logic --------------------------------*/
-
-// Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return fall
-function checkWall(dir, isVertical) {
-	const x = santa.offsetLeft;
-	const y = santa.offsetTop;
-	const maxLen = Math.max(wallCoords.lefts.length, wallCoords.rights.length, wallCoords.tops.length, wallCoords.bottoms.length);
-	const wallChecks = [];
-	let check;
-
-	for (let i = 0; i < maxLen; i++) {
-		check = 0; // 0 is wall, 1 is no wall
-
-		if (isVertical) {
-			if (x < wallCoords.lefts[i] || x > wallCoords.rights[i] - singleCellSize) check = 1;
-			if (dir === "u" && (y < wallCoords.tops[i] || y > wallCoords.bottoms[i])) check = 1;
-			if (dir === "d" && (y < wallCoords.tops[i] - singleCellSize || y > wallCoords.bottoms[i] - singleCellSize)) check = 1;
-		} else {
-			if (y < wallCoords.tops[i] || y > wallCoords.bottoms[i] - singleCellSize) check = 1;
-			if (dir === "l" && (x < wallCoords.lefts[i] || x > wallCoords.rights[i])) check = 1;
-			if (dir === "r" && (x < wallCoords.lefts[i] - singleCellSize || x > wallCoords.rights[i] - singleCellSize)) check = 1;
-		}
-
-		wallChecks.push(check);
-	}
-
-	return wallChecks.every(check => check === 1);
-}
-
-// Check if Santa can move vertically
-function checkVerticalWall(dir) {
-    return checkWall(dir, true);
-}
-
-// Check if Santa can move horizontally
-function checkHorizontalWall(dir) {
-    return checkWall(dir, false);
-}
-
-// Start and reset timer
-function runTimer(){ // timer size gets smaller as timer runs why?
-	const timer = setInterval(() => {
-			timerDiv.innerText = '00:' + String(totalTime).padStart(2, '0');			
-			totalTime--;
-			if (totalTime < 0) {
-				clearInterval(timer);
-				displayLose();
-			}
-	}, 1000);
-}
-
-// Return game status
-function checkGameStatus() {
-	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "Game Over";
-	if (totalTime <= 30 && santa.offsetLeft > gridWidth) return "You Win";
-}
-
 
 /*-------------------------------- Button Event Handlers --------------------------------*/
 
