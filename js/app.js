@@ -12,7 +12,7 @@ const santaCurrentPos = { top: 0, left: 0 };
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let totalTime = 2; // 30 seconds
+let totalTime = 60; // 30 seconds
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -301,12 +301,13 @@ function checkHorizontalWall(dir) {
 	return checkWall(dir, false);
 }
 
-// Start and reset timer
+// Start and pause timer when game ends
 function runTimer() {
 	const timer = setInterval(() => {
 		timeEl.innerText = '00:' + String(totalTime).padStart(2, '0');
 		totalTime--;
-		if (totalTime < 0) {
+
+		if (checkGameStatus()) {
 			clearInterval(timer);
 			displayResult();
 		}
@@ -328,18 +329,20 @@ function updateTimer() {
 	}
 
 	const emojiEffects = {
-		cookie: () => totalTime += 5,
-		clock: () => totalTime += 10,
+		cookie: () => totalTime += 6,
+		clock: () => totalTime += 11,
 		kid: () => Object.assign(santa.style, { top: `${santaCurrentPos.top}px`, left: '0px' }),
 		key: () => {
-			totalTime -= 10;
+			totalTime -= 9;
 			// highlighting the correct path
 		},
 	};
 
 	for (let emo in emojis) {
-		if (isCollided(emojis[emo]))
+		if (isCollided(emojis[emo])) {
 			emojiEffects[emo]();
+			emojis[emo].classList.add('hide'); // remove emo after colliding
+		}		
 	}
 }
 
@@ -441,10 +444,19 @@ playAgainBtn.addEventListener('click', restartGame);
 
 
 // Get timer to work correctly
-// Add player name element 
-// Update localStorage logic
-// Update placing logics for kid and key emojis
-// Add snow falling effects
+
+// Remove emojis after collision
+// Add displayEmojis inside display maze
+// Use animal foot prints to highlight correct path
+// Update target emoji to rudolph icon
+// Mission accomplish is showing on and off
+// Reset maze when hitting play
 // Add music
+// Add sound effects for each emojis
+// Update localStorage logic
+// Add player name element 
+// +5 seconds bubble effects when hitting bonus emojis
+// 3 seconds counting down effect when hitting play
+// Update placing logics for kid and key emojis
+// Add speaker symbol and song playing on top right corner
 // Update restart button to reset DOM instead of reload page
-// Update color palette?
