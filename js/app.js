@@ -1,10 +1,10 @@
 /*-------------------------------- Constants --------------------------------*/
 
-const singleCellSize = 20;
+const cellSize = 20;
 const gridHeight = 300;
 const gridWidth = 300;
-const totalGridRows = gridHeight / singleCellSize; // 15
-const totalGridCols = gridWidth / singleCellSize; // 15
+const totalGridRows = gridHeight / cellSize; // 15
+const totalGridCols = gridWidth / cellSize; // 15
 const gridArr = [];
 const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
 const santaCurrentPos = { top: 0, left: 0 };
@@ -31,8 +31,8 @@ const resultDiv = document.getElementById('result');
 
 /*-------------------------------- Grid Manipulations --------------------------------*/
 
-// Populate grid's outer walls
-function initializeOuterWalls() {
+// Store grid's walls coordinations
+function storeWallsCoords() {
 	for (let i = 0; i < walls.length; i++) {
 		wallCoords.lefts.push(walls[i].offsetLeft);
 		wallCoords.rights.push(walls[i].offsetLeft + walls[i].clientWidth);
@@ -56,23 +56,23 @@ function initializeGrid() {
 
 // Create maze's vertical boundaries with random entry and exit gaps
 function createVerticalBoundaries() {
-	const topHeight = Math.floor(Math.random() * totalGridRows) * singleCellSize;
-	const botHeight = gridHeight - singleCellSize - topHeight;
-	const rightWall_x = gridWidth + singleCellSize;
+	const topHeight = Math.floor(Math.random() * totalGridRows) * cellSize;
+	const botHeight = gridHeight - cellSize - topHeight;
+	const rightWall_x = gridWidth + cellSize;
 
 	const boundaries = [
-		{ t: singleCellSize, l: singleCellSize, h: topHeight },
-		{ t: topHeight + 2 * singleCellSize, l: singleCellSize, h: botHeight },
-		{ t: singleCellSize, l: rightWall_x, h: botHeight },
-		{ t: botHeight + 2 * singleCellSize, l: rightWall_x, h: topHeight }
+		{ t: cellSize, l: cellSize, h: topHeight },
+		{ t: topHeight + 2 * cellSize, l: cellSize, h: botHeight },
+		{ t: cellSize, l: rightWall_x, h: botHeight },
+		{ t: botHeight + 2 * cellSize, l: rightWall_x, h: topHeight }
 	];
 
 	// Set Santa entry & exit position
-	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
-	Object.assign(exit.style, { top: `${botHeight + singleCellSize}px`, left: `${rightWall_x}px` });
+	Object.assign(santa.style, { top: `${topHeight + cellSize}px`, left: '0px' });
+	Object.assign(exit.style, { top: `${botHeight + cellSize}px`, left: `${rightWall_x}px` });
 
 	// Update Santa's current position
-	santaCurrentPos.top = topHeight + singleCellSize;
+	santaCurrentPos.top = topHeight + cellSize;
 
 	// Create boundaries
 	boundaries.forEach(({ t, l, h }) => {
@@ -89,7 +89,7 @@ function createVerticalBoundaries() {
 function updateWallCoords(topHeight, botHeight, rightWall_x) {
 	wallCoords.lefts.push(
 		0,
-		gridWidth + 2 * singleCellSize,
+		gridWidth + 2 * cellSize,
 		0,
 		0,
 		rightWall_x,
@@ -98,29 +98,29 @@ function updateWallCoords(topHeight, botHeight, rightWall_x) {
 
 	wallCoords.rights.push(
 		wallHeight,
-		gridWidth + 2 * singleCellSize + wallHeight,
-		singleCellSize,
-		singleCellSize,
-		gridWidth + 2 * singleCellSize,
-		gridWidth + 2 * singleCellSize
+		gridWidth + 2 * cellSize + wallHeight,
+		cellSize,
+		cellSize,
+		gridWidth + 2 * cellSize,
+		gridWidth + 2 * cellSize
 	);
 
 	wallCoords.tops.push(
-		topHeight + singleCellSize,
-		botHeight + singleCellSize,
-		topHeight + singleCellSize,
-		topHeight + 2 * singleCellSize,
-		botHeight + singleCellSize,
-		botHeight + 2 * singleCellSize
+		topHeight + cellSize,
+		botHeight + cellSize,
+		topHeight + cellSize,
+		topHeight + 2 * cellSize,
+		botHeight + cellSize,
+		botHeight + 2 * cellSize
 	);
 
 	wallCoords.bottoms.push(
-		topHeight + singleCellSize * 2,
-		botHeight + singleCellSize * 2,
-		topHeight + singleCellSize + wallHeight,
-		topHeight + 2 * singleCellSize + wallHeight,
-		botHeight + singleCellSize + wallHeight,
-		botHeight + 2 * singleCellSize + wallHeight
+		topHeight + cellSize * 2,
+		botHeight + cellSize * 2,
+		topHeight + cellSize + wallHeight,
+		topHeight + 2 * cellSize + wallHeight,
+		botHeight + cellSize + wallHeight,
+		botHeight + 2 * cellSize + wallHeight
 	);
 }
 
@@ -160,8 +160,8 @@ function generateRandomMaze(currentX, currentY) {
 
 // Create maze's internal walls
 function createMazeWalls(x, y, u, d, l, r) {
-	const top = (y + 1) * singleCellSize;
-	const left = (x + 1) * singleCellSize;
+	const top = (y + 1) * cellSize;
+	const left = (x + 1) * cellSize;
 
 	const innerWalls = [];
 
@@ -170,15 +170,15 @@ function createMazeWalls(x, y, u, d, l, r) {
 			top,
 			left,
 			width: wallHeight,
-			height: singleCellSize,
+			height: cellSize,
 		});
 	}
 
 	if (d === 0 && y < totalGridRows - 1) {
 		innerWalls.push({
-			top: top + singleCellSize,
+			top: top + cellSize,
 			left,
-			width: singleCellSize + wallHeight,
+			width: cellSize + wallHeight,
 			height: wallHeight,
 		});
 	}
@@ -215,8 +215,8 @@ function displayEmojis() {
 	};
 
 	for (let emo in emojis) {
-		const randomX = (Math.floor(Math.random() * totalGridCols) + 1) * singleCellSize;
-		const randomY = (Math.floor(Math.random() * totalGridRows) + 1) * singleCellSize;
+		const randomX = (Math.floor(Math.random() * totalGridCols) + 1) * cellSize;
+		const randomY = (Math.floor(Math.random() * totalGridRows) + 1) * cellSize;
 		const emoji = document.createElement('div');
 
 		emoji.setAttribute('id', emo);
@@ -276,13 +276,13 @@ function checkWall(dir, isVertical) {
 		check = 0; // 0 is wall, 1 is no wall
 
 		if (isVertical) {
-			if (x < wallCoords.lefts[i] || x > wallCoords.rights[i] - singleCellSize) check = 1;
+			if (x < wallCoords.lefts[i] || x > wallCoords.rights[i] - cellSize) check = 1;
 			if (dir === "u" && (y < wallCoords.tops[i] || y > wallCoords.bottoms[i])) check = 1;
-			if (dir === "d" && (y < wallCoords.tops[i] - singleCellSize || y > wallCoords.bottoms[i] - singleCellSize)) check = 1;
+			if (dir === "d" && (y < wallCoords.tops[i] - cellSize || y > wallCoords.bottoms[i] - cellSize)) check = 1;
 		} else {
-			if (y < wallCoords.tops[i] || y > wallCoords.bottoms[i] - singleCellSize) check = 1;
+			if (y < wallCoords.tops[i] || y > wallCoords.bottoms[i] - cellSize) check = 1;
 			if (dir === "l" && (x < wallCoords.lefts[i] || x > wallCoords.rights[i])) check = 1;
-			if (dir === "r" && (x < wallCoords.lefts[i] - singleCellSize || x > wallCoords.rights[i] - singleCellSize)) check = 1;
+			if (dir === "r" && (x < wallCoords.lefts[i] - cellSize || x > wallCoords.rights[i] - cellSize)) check = 1;
 		}
 
 		wallChecks.push(check);
@@ -358,25 +358,25 @@ function checkGameStatus() {
 
 function up() {
 	if (checkVerticalWall('u')) {
-		santa.style.top = santa.offsetTop - singleCellSize + 'px';
+		santa.style.top = santa.offsetTop - cellSize + 'px';
 	}
 }
 
 function down() {
 	if (checkVerticalWall('d')) {
-		santa.style.top = santa.offsetTop + singleCellSize + 'px';
+		santa.style.top = santa.offsetTop + cellSize + 'px';
 	}
 }
 
 function left() {
 	if (checkHorizontalWall('l')) {
-		santa.style.left = santa.offsetLeft - singleCellSize + 'px';
+		santa.style.left = santa.offsetLeft - cellSize + 'px';
 	}
 }
 
 function right() {
 	if (checkHorizontalWall('r')) {
-		santa.style.left = santa.offsetLeft + singleCellSize + 'px';
+		santa.style.left = santa.offsetLeft + cellSize + 'px';
 	}
 
 	if (santa.offsetLeft > gridWidth) {
@@ -421,7 +421,7 @@ function restartGame() {
 
 /*-------------------------------- Page Populating Functions --------------------------------*/
 
-window.onload = () => initializeOuterWalls(); // Initialize walls when page is done loading
+window.onload = () => storeWallsCoords(); 
 initializeGrid();
 createVerticalBoundaries();
 generateRandomMaze(0, 0);
@@ -443,9 +443,6 @@ playBtn.addEventListener('click', startGame);
 playAgainBtn.addEventListener('click', restartGame);
 
 
-// Get timer to work correctly
-
-// Remove emojis after collision
 // Add displayEmojis inside display maze
 // Use animal foot prints to highlight correct path
 // Update target emoji to rudolph icon
