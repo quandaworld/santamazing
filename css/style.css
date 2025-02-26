@@ -98,16 +98,25 @@ ul {
 	width: 302px;
 }
 
-#result {
+#result,
+#countdown {
 	position: absolute;
 	inset: 0;
-	display: none;
+	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+#result {
 	font-size: 1.8rem;
 }
 
-#result.show {
+#countdown {
+	font-size: 11rem;
+}
+
+#result.show,
+#countdown.show {
 	display: flex;
 }
 
