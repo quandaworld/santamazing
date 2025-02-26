@@ -7,12 +7,15 @@ const totalGridRows = gridHeight / cellSize; // 15
 const totalGridCols = gridWidth / cellSize; // 15
 const gridArr = [];
 const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
-const santaCurrentPos = { top: 0, left: 0 };
+const santaStartPos = { top: 0, left: 0 };
+const exitPos = { top: 0, left: 0 };
 
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let totalTime = 60; // 30 seconds
+let totalTime = 2; // 30 seconds
+let hasGameStarted = false;
+let hasGameEnded = false;
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -25,8 +28,6 @@ const wallHeight = document.getElementById('top').clientHeight; // top and botto
 const restartBtn = document.getElementById('restart');
 const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
-const timeEl = document.getElementById('time');
-const resultDiv = document.getElementById('result');
 
 
 /*-------------------------------- Grid Manipulations --------------------------------*/
@@ -67,12 +68,13 @@ function createVerticalBoundaries() {
 		{ t: botHeight + 2 * cellSize, l: rightWall_x, h: topHeight }
 	];
 
-	// Set Santa entry & exit position
+	// Set Santa entry & exit positions in the maze
 	Object.assign(santa.style, { top: `${topHeight + cellSize}px`, left: '0px' });
 	Object.assign(exit.style, { top: `${botHeight + cellSize}px`, left: `${rightWall_x}px` });
 
-	// Update Santa's current position
-	santaCurrentPos.top = topHeight + cellSize;
+	// Update Santa and exit position variables
+	Object.assign(santaStartPos, { top: topHeight + cellSize, left: 0 });
+	Object.assign(exitPos, { top: botHeight + cellSize, left: rightWall_x });
 
 	// Create boundaries
 	boundaries.forEach(({ t, l, h }) => {
@@ -203,6 +205,8 @@ function displayMaze() {
 			createMazeWalls(x, y, u, d, l, r);
 		}
 	}
+
+	displayEmojis();
 }
 
 // Add emojis to maze
@@ -232,6 +236,8 @@ function displayEmojis() {
 
 // Update page UI when game ends
 function displayResult() {
+	const resultDiv = document.getElementById('result');
+
 	document.getElementById('maze').style.filter = 'blur(5px)'; // Blurs entire grid & walls
 	resultDiv.classList.add('show');
 	playBtn.classList.add('hide');
@@ -246,7 +252,76 @@ function displayResult() {
 		resultDiv.innerText = "Time's Up!";
 	}
 
-	document.removeEventListener('keydown', handleKeyboardInput); // This needs to be updated because it removes everything including Enter
+	santa.innerText = '' // remove Santa when game ends
+	hasGameEnded = true;
+}
+
+// Start and pause timer when game ends
+function runTimer() {
+	setTimeout(() => {
+		const timer = setInterval(() => {
+			document.getElementById('time').innerText = '00:' + String(totalTime).padStart(2, '0');
+			totalTime--;
+	
+			if (checkGameStatus()) {
+				clearInterval(timer);
+				displayResult();
+			}
+		}, 1000);
+	}, 3000);
+}
+
+
+// Display 3 seconds countdown and timer countdown
+function runCountdown() {
+	const countdownDiv = document.getElementById('countdown');
+	let countdownTime = 3;
+
+	const pregameCountDown = setInterval(() => {
+		document.getElementById('maze').style.filter = 'blur(5px)'; // Blurs entire grid & walls
+		countdownDiv.innerText = String(countdownTime);
+		countdownTime--;
+
+		if (countdownTime < 0) {
+			clearInterval(pregameCountDown);
+			document.getElementById('maze').style.removeProperty('filter');
+			countdownDiv.innerText = '';
+		}
+	}, 1000);
+
+	runTimer();
+}
+
+// Helper method to check if Santa collides with emojis
+function isCollided(emo) {
+	return santa.offsetLeft === emo.offsetLeft && santa.offsetTop === emo.offsetTop;
+}
+
+// Update timer as Santa hits different emojis
+function updateTimer() {
+	const emojis = {
+		cookie: document.getElementById('cookie'),
+		clock: document.getElementById('clock'),
+		kid: document.getElementById('kid'),
+		key: document.getElementById('key'),
+	}
+
+	const emojiEffects = {
+		cookie: () => totalTime += 6,
+		clock: () => totalTime += 11,
+		kid: () => Object.assign(santa.style, { top: `${santaStartPos.top}px`, left: '0px' }),
+		key: () => {
+			totalTime -= 9;
+			Object.assign(santa.style, { top: `${exitPos.top}px`, left: `${exitPos.left - cellSize}px` })
+		},
+	};
+
+	for (let emo in emojis) {
+		if (isCollided(emojis[emo])) {
+			emojiEffects[emo]();
+			emojis[emo].classList.add('hide'); // remove emo after colliding
+		}
+	}
 }
 
 // Update top scorers board with localStorage
@@ -301,56 +376,10 @@ function checkHorizontalWall(dir) {
 	return checkWall(dir, false);
 }
 
-// Start and pause timer when game ends
-function runTimer() {
-	const timer = setInterval(() => {
-		timeEl.innerText = '00:' + String(totalTime).padStart(2, '0');
-		totalTime--;
-
-		if (checkGameStatus()) {
-			clearInterval(timer);
-			displayResult();
-		}
-	}, 1000);
-}
-
-// Check if Santa collides with emojis, helper method for updateTimer()
-function isCollided(emo) { // this has to check when santa about to
-	return santa.offsetLeft === emo.offsetLeft && santa.offsetTop === emo.offsetTop;
-}
-
-// Update timer as Santa hits different emojis
-function updateTimer() {
-	const emojis = {
-		cookie: document.getElementById('cookie'),
-		clock: document.getElementById('clock'),
-		kid: document.getElementById('kid'),
-		key: document.getElementById('key'),
-	}
-
-	const emojiEffects = {
-		cookie: () => totalTime += 6,
-		clock: () => totalTime += 11,
-		kid: () => Object.assign(santa.style, { top: `${santaCurrentPos.top}px`, left: '0px' }),
-		key: () => {
-			totalTime -= 9;
-			// highlighting the correct path
-		},
-	};
-
-	for (let emo in emojis) {
-		if (isCollided(emojis[emo])) {
-			emojiEffects[emo]();
-			emojis[emo].classList.add('hide'); // remove emo after colliding
-		}		
-	}
-}
-
-
 // Return game status
 function checkGameStatus() {
 	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "lose";
-	if (totalTime <= 60 && santa.offsetLeft > gridWidth) return "win";
+	if (totalTime >= 0 && santa.offsetLeft > gridWidth) return "win";
 }
 
 
@@ -408,9 +437,12 @@ function handleEnterKey() {
 }
 
 /*-------------------------------- Button Event Handlers --------------------------------*/
+
 // Event handler for start button
 function startGame() {
-	runTimer();
+	hasGameStarted = true;
+	runCountdown();
+	// runTimer();
 }
 
 // Event handler for restart button, to be updated
@@ -421,19 +453,19 @@ function restartGame() {
 
 /*-------------------------------- Page Populating Functions --------------------------------*/
 
-window.onload = () => storeWallsCoords(); 
+window.onload = () => storeWallsCoords();
 initializeGrid();
 createVerticalBoundaries();
 generateRandomMaze(0, 0);
 displayMaze();
-displayEmojis();
 
 
 /*----------------------------- Event Listeners -----------------------------*/
+
 document.addEventListener('keydown', (e) => {
-	if (e.key === 'Enter') {
+	if (e.key === 'Enter' && (!hasGameStarted || hasGameEnded)) {
 		handleEnterKey();
-	} else if (['ArrowUp', 'ArrowDown', ['ArrowLeft', 'ArrowDown'].includes(e.key)]) {
+	} else if (['ArrowUp', 'ArrowDown', ['ArrowLeft', 'ArrowDown'].includes(e.key)] && hasGameStarted) {
 		handleDirectionalInput(e);
 	}
 });
@@ -443,17 +475,30 @@ playBtn.addEventListener('click', startGame);
 playAgainBtn.addEventListener('click', restartGame);
 
 
-// Add displayEmojis inside display maze
-// Use animal foot prints to highlight correct path
+
+// Remove key if remaining time is less than 10
 // Update target emoji to rudolph icon
-// Mission accomplish is showing on and off
-// Reset maze when hitting play
+
 // Add music
 // Add sound effects for each emojis
+// Add sound for count down
+// Add speaker symbol 
+
 // Update localStorage logic
 // Add player name element 
+
+// Update sizing
+// Reset maze when hitting play
+
 // +5 seconds bubble effects when hitting bonus emojis
-// 3 seconds counting down effect when hitting play
+
 // Update placing logics for kid and key emojis
-// Add speaker symbol and song playing on top right corner
+// Add song name playing on top right corner
 // Update restart button to reset DOM instead of reload page
+
+
+// Done
+// Add displayEmojis inside display maze
+// Santa can only move when timer runs
+// Enter key handler should be removed during game play
+// 3 seconds count down effect
