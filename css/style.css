@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&display=swap');
 
 :root {
-	--grid-color: red;
-	--font-color: #416b46;
-	--background-color: #f9f6ee;
+	--grid-color: white;
+	--font-color: white;
+	--background-color: #0B2B57;
 }
 
 * {
@@ -20,7 +20,7 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	min-height: 100dvh;
-	background-color: var(--background-color); /* to be removed */
+	background-color: var(--background-color);
 }
 
 header {
@@ -69,6 +69,13 @@ ul {
 	place-items: center;
 }
 
+#cookie.hide,
+#clock.hide,
+#kid.hide,
+#key.hide {
+	display: none;
+}
+
 .wall {
 	position: absolute;
 	background: var(--grid-color);
@@ -92,12 +99,12 @@ ul {
 }
 
 #result {
-  position: absolute;
-  inset: 0;
-  display: none;
+	position: absolute;
+	inset: 0;
+	display: none;
 	justify-content: center;
-  align-items: center;
-  font-size: 1.8rem;
+	align-items: center;
+	font-size: 1.8rem;
 }
 
 #result.show {
@@ -107,10 +114,10 @@ ul {
 .game-btns {
 	position: absolute;
 	bottom: 50px;
-  width: 300px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+	width: 300px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 20px;
 	justify-items: center;
 }
 
@@ -118,15 +125,15 @@ button {
 	color: var(--font-color);
 	border: 1px solid var(--font-color);
 	cursor: pointer;
-  padding: 5px;
-  border-radius: 50px;
-  font-size: 1rem;
-  background-color: var(--background-color);
+	padding: 5px;
+	border-radius: 50px;
+	font-size: 1rem;
+	background-color: var(--background-color);
 	width: 130px;
 }
 
 button:hover {
-  background-color: var(--font-color);
+	background-color: var(--font-color);
 	color: var(--background-color);
 }
 
@@ -146,3 +153,34 @@ footer {
 	color: var(--font-color);
 	margin-bottom: 5px;
 }
+
+.snow-bg {
+	position: relative;
+}
+
+.snow-bg:after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	animation: snow 15s linear infinite;
+	background-image: url('/assets/images/snow1.png'), url('/assets/images/snow2.png'), url('/assets/images/snow3.png');
+}
+
+@keyframes snow {
+	0% {
+		background-position: 0 0;
+	}
+	33% {
+		background-position: 300px 400px, 50px 150px, -80px 100px;
+	}
+	66% {
+		background-position: 600px 800px, 120px 300px, -150px 200px;
+	}
+	100% {
+		background-position: 900px 1200px, 200px 500px, -200px 350px;
+	}
+}
+
+
+/* Improve screen responsiveness */
