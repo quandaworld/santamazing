@@ -16,7 +16,7 @@ const wallCoords = {
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let totalTime = 2; // 30 seconds
+let totalTime = 60; // 30 seconds
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -31,6 +31,7 @@ const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
 const timeEl = document.getElementById('time');
 const resultDiv = document.getElementById('result');
+const santaCurrentPos = { top: 0, left: 0 };
 
 /*-------------------------------- Grid Manipulations --------------------------------*/
 
@@ -73,6 +74,9 @@ function createVerticalBoundaries() {
 	// Set Santa entry & exit position
 	Object.assign(santa.style, { top: `${topHeight + singleCellSize}px`, left: '0px' });
 	Object.assign(exit.style, { top: `${botHeight + singleCellSize}px`, left: `${rightWall_x}px` });
+
+	// Update Santa's current position
+	santaCurrentPos.top = topHeight + singleCellSize;
 
 	// Create boundaries
 	boundaries.forEach(({ t, l, h }) => {
@@ -207,23 +211,23 @@ function displayMaze() {
 
 // Add emojis to maze
 function displayEmojis() {
-	const emojiMap = {
+	const emojis = {
 		cookie: '🍪',
 		clock: '⏰',
 		kid: '👧🏻',
 		key: '🔑',
 	};
 
-	for (let emo in emojiMap) {
+	for (let emo in emojis) {
 		const randomX = (Math.floor(Math.random() * totalGridCols) + 1) * singleCellSize;
 		const randomY = (Math.floor(Math.random() * totalGridRows) + 1) * singleCellSize;
 		const emoji = document.createElement('div');
-		maze.appendChild(emoji);
 
 		emoji.setAttribute('id', emo);
 		emoji.style.left = `${randomX}px`;
 		emoji.style.top = `${randomY}px`;
-		emoji.innerText = emojiMap[emo];
+		emoji.innerText = emojis[emo];
+		maze.appendChild(emoji);
 	}
 }
 
@@ -246,7 +250,7 @@ function displayResult() {
 		resultDiv.innerText = "Time's Up!";
 	}
 
-	document.removeEventListener('keydown', handleKeyboardInput);
+	document.removeEventListener('keydown', handleKeyboardInput); // This needs to be updated because it removes everything including Enter
 }
 
 // Update top scorers board with localStorage
@@ -313,10 +317,36 @@ function runTimer() {
 	}, 1000);
 }
 
+// Check if Santa collides with emojis, helper method for updateTimer()
+function isCollided(emo) {
+	return santa.offsetLeft === emo.offsetLeft && santa.offsetTop === emo.offsetTop;
+}
+
 // Update timer as Santa hits different emojis
 function updateTimer() {
+	const emojis = {
+		cookie: document.getElementById('cookie'),
+		clock: document.getElementById('clock'),
+		kid: document.getElementById('kid'),
+		key: document.getElementById('key'),
+	}
 
+	const emojiEffects = {
+		cookie: () => totalTime += 5,
+		clock: () => totalTime += 10,
+		kid: () => Object.assign(santa.style, { top: `${santaCurrentPos.top}px`, left: '0px' }),
+		key: () => {
+			totalTime -= 10;
+			// highlighting the correct path
+		},
+	};
+
+	for (let emo in emojis) {
+		if (isCollided(emojis[emo]))
+			emojiEffects[emo];
+	}
 }
+
 
 // Return game status
 function checkGameStatus() {
@@ -356,6 +386,8 @@ function right() {
 }
 
 function handleKeyboardInput(e) {
+	updateTimer();
+
 	switch (e.key) {
 		case 'ArrowUp':
 			up();
@@ -408,3 +440,12 @@ restartBtn.addEventListener('click', restartGame);
 playBtn.addEventListener('click', startGame);
 playAgainBtn.addEventListener('click', restartGame);
 
+
+// Get timer to work correctly
+// Update handler for 'Enter' so it's still working when game ends, maybe do a separate handler for it
+// Separate directional keys and enter key so that directional keys are only activated when hitting Play
+// Update localStorage logic
+// Update placing logics for kid and key emojis
+// Add snow falling effects
+// Add music
+// Update color palette?
