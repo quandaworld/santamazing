@@ -6,17 +6,13 @@ const gridWidth = 300;
 const totalGridRows = gridHeight / singleCellSize; // 15
 const totalGridCols = gridWidth / singleCellSize; // 15
 const gridArr = [];
-const wallCoords = {
-	tops: [],
-	bottoms: [],
-	lefts: [],
-	rights: [],
-}
+const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
+const santaCurrentPos = { top: 0, left: 0 };
 
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let totalTime = 60; // 30 seconds
+let totalTime = 2; // 30 seconds
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -31,7 +27,7 @@ const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
 const timeEl = document.getElementById('time');
 const resultDiv = document.getElementById('result');
-const santaCurrentPos = { top: 0, left: 0 };
+
 
 /*-------------------------------- Grid Manipulations --------------------------------*/
 
@@ -145,7 +141,7 @@ function generateRandomMaze(currentX, currentY) {
 		u: { x: 0, y: -1, o: 'd' },
 		d: { x: 0, y: 1, o: 'u' },
 		l: { x: -1, y: 0, o: 'r' },
-		r: { x: 1, y: 0, o: 'l' }
+		r: { x: 1, y: 0, o: 'l' },
 	};
 
 	for (let i = 0; i < dirs.length; i++) {
@@ -318,7 +314,7 @@ function runTimer() {
 }
 
 // Check if Santa collides with emojis, helper method for updateTimer()
-function isCollided(emo) {
+function isCollided(emo) { // this has to check when santa about to
 	return santa.offsetLeft === emo.offsetLeft && santa.offsetTop === emo.offsetTop;
 }
 
@@ -343,7 +339,7 @@ function updateTimer() {
 
 	for (let emo in emojis) {
 		if (isCollided(emojis[emo]))
-			emojiEffects[emo];
+			emojiEffects[emo]();
 	}
 }
 
@@ -385,9 +381,7 @@ function right() {
 	}
 }
 
-function handleKeyboardInput(e) {
-	updateTimer();
-
+function handleDirectionalInput(e) {
 	switch (e.key) {
 		case 'ArrowUp':
 			up();
@@ -401,23 +395,22 @@ function handleKeyboardInput(e) {
 		case 'ArrowRight':
 			right();
 			break;
-		case 'Enter':
-			if (!checkGameStatus()) {
-				startGame();
-			} else {
-				restartGame();
-			}
 	}
+
+	updateTimer();
+}
+
+function handleEnterKey() {
+	checkGameStatus() ? restartGame() : startGame();
 }
 
 /*-------------------------------- Button Event Handlers --------------------------------*/
-
 // Event handler for start button
 function startGame() {
 	runTimer();
 }
 
-// Event handler for restart button
+// Event handler for restart button, to be updated
 function restartGame() {
 	window.location.reload();
 }
@@ -434,18 +427,24 @@ displayEmojis();
 
 
 /*----------------------------- Event Listeners -----------------------------*/
+document.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		handleEnterKey();
+	} else if (['ArrowUp', 'ArrowDown', ['ArrowLeft', 'ArrowDown'].includes(e.key)]) {
+		handleDirectionalInput(e);
+	}
+});
 
-document.addEventListener('keydown', handleKeyboardInput);
 restartBtn.addEventListener('click', restartGame);
 playBtn.addEventListener('click', startGame);
 playAgainBtn.addEventListener('click', restartGame);
 
 
 // Get timer to work correctly
-// Update handler for 'Enter' so it's still working when game ends, maybe do a separate handler for it
-// Separate directional keys and enter key so that directional keys are only activated when hitting Play
+// Add player name element 
 // Update localStorage logic
 // Update placing logics for kid and key emojis
 // Add snow falling effects
 // Add music
+// Update restart button to reset DOM instead of reload page
 // Update color palette?
