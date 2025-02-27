@@ -17,9 +17,8 @@ const audios = {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let totalTime = 60; // 30 seconds
+let totalTime = 5; // 30 seconds
 let hasGameStarted = false;
-let hasGameEnded = false;
 let isSoundOn = true;
 
 
@@ -270,7 +269,6 @@ function displayResult() {
 	}
 
 	santa.innerText = '' // Remove Santa when game ends
-	hasGameEnded = true;
 }
 
 // Start and pause timer when game ends
@@ -412,10 +410,11 @@ function checkHorizontalWall(dir) {
 function checkGameStatus() {
 	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "lose";
 	if (totalTime >= 0 && santa.offsetLeft > gridWidth) return "win";
+	return null;
 }
 
 class Player {
-	constructor(name) {
+	constructor(name = 'Good Kid') {
 		this.name = name;
 		this.record = 0;
 	}
@@ -470,14 +469,6 @@ function handleDirectionalInput(e) {
 	updateTimer();
 }
 
-function handleEnterKey() {
-	checkGameStatus() ? restartGame() : startGame();
-}
-
-function startGame() {
-	runCountdown();
-}
-
 function restartGame() {
 	window.location.reload();
 }
@@ -485,11 +476,7 @@ function restartGame() {
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('keydown', (e) => {
-	if (e.key === 'Enter' && (!hasGameStarted || hasGameEnded)) {
-		handleEnterKey();
-	} else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) && hasGameStarted) {
-		handleDirectionalInput(e);
-	}
+	if (hasGameStarted) handleDirectionalInput(e);
 });
 
 soundDiv.addEventListener('click', () => {
@@ -502,7 +489,7 @@ soundDiv.addEventListener('click', () => {
 
 document.getElementById('enter-game').addEventListener('click', enterGame);
 restartBtn.addEventListener('click', restartGame);
-playBtn.addEventListener('click', startGame, { once: true });
+playBtn.addEventListener('click', runCountdown, { once: true });
 playAgainBtn.addEventListener('click', restartGame);
 
 
@@ -517,6 +504,3 @@ function render() {
 }
 
 render();
-
-// only activate startGame after opening
-// attach let's go to enter key during opening
