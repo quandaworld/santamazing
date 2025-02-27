@@ -17,7 +17,7 @@ const audios = {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let totalTime = 5; // 30 seconds
+let totalTime = 50; // 30 seconds
 let hasGameStarted = false;
 let isSoundOn = true;
 
@@ -220,15 +220,25 @@ function displayEmojis() {
 		key: '🔑',
 	};
 
-	for (let emo in emojis) {
-		const randomX = (Math.floor(Math.random() * totalGridCols) + 1) * cellSize;
-		const randomY = (Math.floor(Math.random() * totalGridRows) + 1) * cellSize;
-		const emoji = document.createElement('div');
+	const occupiedCells = new Set(); // Store occupied positions
 
+	for (let emo in emojis) {
+		let randomX, randomY, position;
+
+		do {
+			randomX = (Math.floor(Math.random() * totalGridCols) + 1) * cellSize;
+			randomY = (Math.floor(Math.random() * totalGridRows) + 1) * cellSize;
+			position = `${randomX},${randomY}`;
+		} while (occupiedCells.has(position)); // Repeat if position is occupied
+
+		occupiedCells.add(position);
+
+		const emoji = document.createElement('div');
 		emoji.setAttribute('id', emo);
 		emoji.style.left = `${randomX}px`;
 		emoji.style.top = `${randomY}px`;
 		emoji.innerText = emojis[emo];
+
 		maze.appendChild(emoji);
 	}
 }
