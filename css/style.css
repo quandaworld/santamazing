@@ -33,8 +33,8 @@ header {
 	position: absolute;
 	top: 25px;
 	right: 45px;
-	pointer-events: auto;
-	cursor: pointer; /* not working */
+	cursor: pointer; 
+	z-index: 10;
 }
 
 #timer {

@@ -27,7 +27,7 @@ const restartBtn = document.getElementById('restart');
 const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
 const soundDiv = document.getElementById('sound');
-const soundIcon = document.getElementById('silent'); // page default to silent icon
+const speakerIcon = document.getElementById('speaker-icon');
 const audios = {
 	maze: new Audio('/assets/audios/maze.mp3'),
 	santa: new Audio('/assets/audios/santa.mp3')
@@ -334,13 +334,16 @@ function updateRecordBoard() {
 
 /*-------------------------------- Audio Components --------------------------------*/
 function muteSound() {
-	soundIcon.src = '/assets/images/speaker.png';
+	speakerIcon.src = '/assets/images/speaker.png';
+	speakerIcon.alt = 'Sound-on icon';
 	audios.santa.volume = 0;
 	audios.maze.volume = 0;
 	isSoundOn = false;
 }
 
 function unmuteSound() {
+	speakerIcon.src = '/assets/images/silent.png';
+	speakerIcon.alt = 'Silent icon';
 	audios.santa.volume = 1;
 	audios.maze.volume = 1;
 	isSoundOn = true;
@@ -460,8 +463,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 soundDiv.addEventListener('click', () => {
-	console.log('clicked');
-
 	if (isSoundOn) {
 		muteSound();
 	} else {
