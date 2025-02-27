@@ -49,6 +49,10 @@ body {
 	font-size: 1.5rem;
 }
 
+input::placeholder {
+	color: rgb(189, 189, 189);
+}
+
 header {
 	color: var(--font-color);
 	margin-top: 10px;
