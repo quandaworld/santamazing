@@ -29,10 +29,19 @@ header {
 	font-size: 1.5rem;
 }
 
+#sound {
+	position: absolute;
+	top: 25px;
+	right: 45px;
+	pointer-events: auto;
+	cursor: pointer; /* not working */
+}
+
 #timer {
 	position: absolute;
 	margin-top: 75px;
 	color: var(--font-color);
+	cursor: pointer;
 }
 
 #side-boards {
@@ -190,6 +199,3 @@ footer {
 		background-position: 900px 1200px, 200px 500px, -200px 350px;
 	}
 }
-
-
-/* Improve screen responsiveness */
