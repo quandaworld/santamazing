@@ -1,5 +1,4 @@
 /*-------------------------------- Constants --------------------------------*/
-
 const cellSize = 20;
 const gridHeight = 300;
 const gridWidth = 300;
@@ -12,14 +11,13 @@ const exitPos = { top: 0, left: 0 };
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-
-let totalTime = 2; // 30 seconds
+let totalTime = 60; // 30 seconds
 let hasGameStarted = false;
 let hasGameEnded = false;
+let isSoundOn = true;
 
 
 /*------------------------ Cached Element References ------------------------*/
-
 const maze = document.getElementById('maze');
 const santa = document.getElementById('santa');
 const exit = document.getElementById('exit');
@@ -28,11 +26,16 @@ const wallHeight = document.getElementById('top').clientHeight; // top and botto
 const restartBtn = document.getElementById('restart');
 const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
+const soundDiv = document.getElementById('sound');
+const soundIcon = document.getElementById('silent'); // page default to silent icon
+const audios = {
+	maze: new Audio('/assets/audios/maze.mp3'),
+	santa: new Audio('/assets/audios/santa.mp3')
+}
 
 
 /*-------------------------------- Grid Manipulations --------------------------------*/
-
-// Store grid's walls coordinations
+// Store grid walls' coordinations
 function storeWallsCoords() {
 	for (let i = 0; i < walls.length; i++) {
 		wallCoords.lefts.push(walls[i].offsetLeft);
@@ -87,7 +90,7 @@ function createVerticalBoundaries() {
 	updateWallCoords(topHeight, botHeight, rightWall_x);
 }
 
-// Helper method for createVerticalBoundaries()
+// Update grid walls' coordinations
 function updateWallCoords(topHeight, botHeight, rightWall_x) {
 	wallCoords.lefts.push(
 		0,
@@ -126,7 +129,6 @@ function updateWallCoords(topHeight, botHeight, rightWall_x) {
 	);
 }
 
-// Helper method for generateRandomMaze()
 function shuffleArr(arr) {
 	for (let i = arr.length - 1; i >= 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
@@ -193,7 +195,6 @@ function createMazeWalls(x, y, u, d, l, r) {
 	});
 }
 
-// Display maze
 function displayMaze() {
 	for (let x = 0; x < totalGridCols; x++) {
 		for (let y = 0; y < totalGridRows; y++) {
@@ -209,7 +210,6 @@ function displayMaze() {
 	displayEmojis();
 }
 
-// Add emojis to maze
 function displayEmojis() {
 	const emojis = {
 		cookie: '🍪',
@@ -233,7 +233,6 @@ function displayEmojis() {
 
 
 /*-------------------------------- Other DOM Components --------------------------------*/
-
 // Update page UI when game ends
 function displayResult() {
 	const resultDiv = document.getElementById('result');
@@ -247,6 +246,7 @@ function displayResult() {
 	if (checkGameStatus() === 'win') {
 		santa.innerText = '';
 		exit.innerText = '🎉';
+		audios.santa.play();
 		resultDiv.innerText = 'Mission Accomplished!';
 	} else if (checkGameStatus() === 'lose') {
 		resultDiv.innerText = "Time's Up!";
@@ -260,9 +260,12 @@ function displayResult() {
 function runTimer() {
 	setTimeout(() => {
 		const timer = setInterval(() => {
+			hasGameStarted = true;
 			document.getElementById('time').innerText = '00:' + String(totalTime).padStart(2, '0');
 			totalTime--;
-	
+
+			if (totalTime < 10) document.getElementById('key').innerText = ''; // remove key if time < 10 secs
+
 			if (checkGameStatus()) {
 				clearInterval(timer);
 				displayResult();
@@ -271,13 +274,13 @@ function runTimer() {
 	}, 3000);
 }
 
-
 // Display 3 seconds countdown and timer countdown
 function runCountdown() {
 	const countdownDiv = document.getElementById('countdown');
 	let countdownTime = 3;
 
 	const pregameCountDown = setInterval(() => {
+		audios.maze.play();
 		document.getElementById('maze').style.filter = 'blur(5px)'; // Blurs entire grid & walls
 		countdownDiv.innerText = String(countdownTime);
 		countdownTime--;
@@ -292,12 +295,11 @@ function runCountdown() {
 	runTimer();
 }
 
-// Helper method to check if Santa collides with emojis
 function isCollided(emo) {
 	return santa.offsetLeft === emo.offsetLeft && santa.offsetTop === emo.offsetTop;
 }
 
-// Update timer as Santa hits different emojis
+// Update timer when Santa hits different emojis
 function updateTimer() {
 	const emojis = {
 		cookie: document.getElementById('cookie'),
@@ -331,14 +333,21 @@ function updateRecordBoard() {
 
 
 /*-------------------------------- Audio Components --------------------------------*/
+function muteSound() {
+	soundIcon.src = '/assets/images/speaker.png';
+	audios.santa.volume = 0;
+	audios.maze.volume = 0;
+	isSoundOn = false;
+}
 
-// Play slow music when page is done loading and when game is over
-
-// Play fast music when player hit start, stop when game is over
+function unmuteSound() {
+	audios.santa.volume = 1;
+	audios.maze.volume = 1;
+	isSoundOn = true;
+}
 
 
 /*-------------------------------- Game Logic --------------------------------*/
-
 // Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return fall
 function checkWall(dir, isVertical) {
 	const x = santa.offsetLeft;
@@ -366,25 +375,21 @@ function checkWall(dir, isVertical) {
 	return wallChecks.every(check => check === 1);
 }
 
-// Check if Santa can move vertically
 function checkVerticalWall(dir) {
 	return checkWall(dir, true);
 }
 
-// Check if Santa can move horizontally
 function checkHorizontalWall(dir) {
 	return checkWall(dir, false);
 }
 
-// Return game status
 function checkGameStatus() {
 	if (totalTime < 0 && santa.offsetLeft <= gridWidth) return "lose";
 	if (totalTime >= 0 && santa.offsetLeft > gridWidth) return "win";
 }
 
 
-/*-------------------------------- Keyboard Events --------------------------------*/
-
+/*-------------------------------- Events Handlers --------------------------------*/
 function up() {
 	if (checkVerticalWall('u')) {
 		santa.style.top = santa.offsetTop - cellSize + 'px';
@@ -436,32 +441,16 @@ function handleEnterKey() {
 	checkGameStatus() ? restartGame() : startGame();
 }
 
-/*-------------------------------- Button Event Handlers --------------------------------*/
-
-// Event handler for start button
 function startGame() {
-	hasGameStarted = true;
 	runCountdown();
-	// runTimer();
 }
 
-// Event handler for restart button, to be updated
 function restartGame() {
 	window.location.reload();
 }
 
 
-/*-------------------------------- Page Populating Functions --------------------------------*/
-
-window.onload = () => storeWallsCoords();
-initializeGrid();
-createVerticalBoundaries();
-generateRandomMaze(0, 0);
-displayMaze();
-
-
 /*----------------------------- Event Listeners -----------------------------*/
-
 document.addEventListener('keydown', (e) => {
 	if (e.key === 'Enter' && (!hasGameStarted || hasGameEnded)) {
 		handleEnterKey();
@@ -470,35 +459,28 @@ document.addEventListener('keydown', (e) => {
 	}
 });
 
+soundDiv.addEventListener('click', () => {
+	console.log('clicked');
+
+	if (isSoundOn) {
+		muteSound();
+	} else {
+		unmuteSound();
+	}
+});
+
 restartBtn.addEventListener('click', restartGame);
-playBtn.addEventListener('click', startGame);
+playBtn.addEventListener('click', startGame, { once: true });
 playAgainBtn.addEventListener('click', restartGame);
 
 
+/*-------------------------------- Rendering Page --------------------------------*/
+function render() {
+	window.onload = () => storeWallsCoords();
+	initializeGrid();
+	createVerticalBoundaries();
+	generateRandomMaze(0, 0);
+	displayMaze();
+}
 
-// Remove key if remaining time is less than 10
-// Update target emoji to rudolph icon
-
-// Add music
-// Add sound effects for each emojis
-// Add sound for count down
-// Add speaker symbol 
-
-// Update localStorage logic
-// Add player name element 
-
-// Update sizing
-// Reset maze when hitting play
-
-// +5 seconds bubble effects when hitting bonus emojis
-
-// Update placing logics for kid and key emojis
-// Add song name playing on top right corner
-// Update restart button to reset DOM instead of reload page
-
-
-// Done
-// Add displayEmojis inside display maze
-// Santa can only move when timer runs
-// Enter key handler should be removed during game play
-// 3 seconds count down effect
+render();
