@@ -11,57 +11,58 @@
 </head>
 
 <body class="snow-bg">
-  <header>
-    <h1>SANTAMAZING</h1>
-  </header>
-
-  <div id="sound"><img id="speaker-icon" src="assets/images/silent.png" alt="Silent icon" style="height: 20px"></div>
-
-  <div id="timer">
-    <h2 id="time">00:30</h2>
+  <div id="opening">
+    <p>Ho, ho, ho, children! I have delivered all the presents but Rudolph ran away. Can you help me find him so I can get home to Mrs Santa?</p>
+    <p>Leave your name here so I can add you to my good children list!</p>
+    <input type="text" id="player" name="name" required size="10" />
+    <button id="enter-game">Let's Go!</button>
   </div>
-
-  <div id="side-boards">
-    <ul id="emojis">
-      <li>Emoji Board</li>
-      <li>🍪 +5 seconds</li>
-      <li>⏰ +10 seconds</li>
-      <li>🔑 -10 seconds for the way out</li>
-      <li>👧🏻 A kid sees you. Start over!</li>
-    </ul>
-    <ul id="records">
-      <li>Top Records</li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
+  <div id="main">
+    <header>
+      <h1>SANTAMAZING</h1>
+    </header>
+    <div id="sound"><img id="speaker-icon" src="assets/images/silent.png" alt="Silent icon" style="height: 20px"></div>
+    <div id="timer">
+      <h2 id="time">00:30</h2>
+    </div>
+    <div id="side-boards">
+      <ul id="emojis">
+        <li>Emoji Board</li>
+        <li>🍪 +5 seconds</li>
+        <li>⏰ +10 seconds</li>
+        <li>🔑 -10 seconds for the way out</li>
+        <li>👧🏻 A kid sees you. Start over!</li>
+      </ul>
+      <ul id="records">
+        <li>Top Records</li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+    <div id="maze">
+      <div id="santa"><img src="assets/images/santa.png" alt="Santa icon" style="height: 20px"></div>
+      <div id="exit"><img src="assets/images/rudolph.png" alt="Rudolph icon" style="height: 25px"></div>
+      <div class="wall" id="top"></div>
+      <div class="wall" id="bottom"></div>
+    </div>
+    <div id="result"></div>
+    <div id="countdown"></div>
+    <div class="game-btns">
+      <button id="restart">Restart</button>
+      <button id="play">Play</button>
+      <button id="play-again">Play Again</button>
+    </div>
+    <footer>
+      Copyright &copy;
+      <script>document.write(new Date().getFullYear())</script>
+      <a href="https://github.com/quandaworld" target="_blank" style="text-decoration: none; color: inherit">
+        <b>quandaworld </b><i class="fa-brands fa-github" style="font-size: 22px;"></i>
+      </a>
+    </footer>
   </div>
-
-  <div id="maze">
-    <div id="santa"><img src="assets/images/santa.png" alt="Santa icon" style="height: 20px"></div>
-    <div id="exit"><img src="assets/images/rudolph.png" alt="Rudolph icon" style="height: 25px"></div>
-    <div class="wall" id="top"></div>
-    <div class="wall" id="bottom"></div>
-  </div>
-
-  <div id="result"></div>
-  <div id="countdown"></div>
-
-  <div class="game-btns">
-    <button id="restart">Restart</button>
-    <button id="play">Play</button>
-    <button id="play-again">Play Again</button>
-  </div>
-
-  <footer>
-    Copyright &copy;
-    <script>document.write(new Date().getFullYear())</script>
-    <a href="https://github.com/quandaworld" target="_blank" style="text-decoration: none; color: inherit">
-      <b>quandaworld </b><i class="fa-brands fa-github" style="font-size: 22px;"></i>
-    </a>
-  </footer>
 </body>
 
 </html>

@@ -15,12 +15,38 @@
 }
 
 body {
+	background-color: var(--background-color);
+}
+
+#main {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
 	min-height: 100dvh;
 	background-color: var(--background-color);
+}
+
+#opening {
+	display: flex;
+	flex-direction: column;
+	place-items: center;
+	gap: 30px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: var(--font-color);
+	text-align: center;
+	padding: 20px;
+	font-size: 1.5rem;
+	z-index: 10; 
+}
+
+#player {
+	color: var(--background-color);
+	text-align: center;
+	font-size: 1.5rem;
 }
 
 header {
@@ -47,7 +73,8 @@ header {
 #side-boards {
 	justify-self: center;
 	display: flex;
-	gap: 120dvh;
+	flex-wrap: wrap;
+	gap: 60vw;
 	color: var(--font-color);
 }
 
@@ -107,6 +134,8 @@ ul {
 	width: 302px;
 }
 
+
+
 #result,
 #countdown {
 	position: absolute;
@@ -155,7 +184,6 @@ button:hover {
 	color: var(--background-color);
 }
 
-
 #play.hide,
 #restart.hide,
 #play-again {
@@ -199,3 +227,9 @@ footer {
 		background-position: 900px 1200px, 200px 500px, -200px 350px;
 	}
 }
+
+/* @media (max-width: 768px) {
+	#side-boards {
+		flex-direction: column; 
+	}
+} */

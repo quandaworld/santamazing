@@ -8,6 +8,12 @@ const gridArr = [];
 const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
 const santaStartPos = { top: 0, left: 0 };
 const exitPos = { top: 0, left: 0 };
+const records = [];
+const audios = {
+	maze: new Audio('/assets/audios/maze.mp3'),
+	santa: new Audio('/assets/audios/santa.mp3'),
+	theme: new Audio('/assets/audios/theme.mp3')
+}
 
 
 /*---------------------------- Variables (state) ----------------------------*/
@@ -28,13 +34,10 @@ const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
 const soundDiv = document.getElementById('sound');
 const speakerIcon = document.getElementById('speaker-icon');
-const audios = {
-	maze: new Audio('/assets/audios/maze.mp3'),
-	santa: new Audio('/assets/audios/santa.mp3')
-}
+const nameInput = document.getElementById('player');
 
 
-/*-------------------------------- Grid Manipulations --------------------------------*/
+/*--------------------------- Grid Manipulations ----------------------------*/
 // Store grid walls' coordinations
 function storeWallsCoords() {
 	for (let i = 0; i < walls.length; i++) {
@@ -232,12 +235,26 @@ function displayEmojis() {
 }
 
 
-/*-------------------------------- Other DOM Components --------------------------------*/
+/*--------------------------- Other DOM Components --------------------------*/
+// Display game opening
+function displayOpening() {
+	document.getElementById('main').style.filter = 'blur(100px)';
+}
+
+// Enter game after opening
+function enterGame() {
+	records.push(new Player(nameInput.value));
+	document.getElementById('main').style.removeProperty('filter');
+	document.getElementById('opening').style.display = 'none'; 
+	audios.theme.play();
+}
+
 // Update page UI when game ends
 function displayResult() {
 	const resultDiv = document.getElementById('result');
 
-	document.getElementById('maze').style.filter = 'blur(5px)'; // Blurs entire grid & walls
+	document.getElementById('maze').style.filter = 'blur(5px)'; // Blur maze
+
 	resultDiv.classList.add('show');
 	playBtn.classList.add('hide');
 	restartBtn.classList.add('hide');
@@ -252,26 +269,30 @@ function displayResult() {
 		resultDiv.innerText = "Time's Up!";
 	}
 
-	santa.innerText = '' // remove Santa when game ends
+	santa.innerText = '' // Remove Santa when game ends
 	hasGameEnded = true;
 }
 
 // Start and pause timer when game ends
 function runTimer() {
+	const keyEmo = document.getElementById('key');
+
 	setTimeout(() => {
 		const timer = setInterval(() => {
 			hasGameStarted = true;
 			document.getElementById('time').innerText = '00:' + String(totalTime).padStart(2, '0');
 			totalTime--;
 
-			if (totalTime < 10) document.getElementById('key').innerText = ''; // remove key if time < 10 secs
+			if (totalTime < 10) keyEmo.innerText = ''; // Remove key if time < 10 secs
+
+			if (totalTime >= 10 && !keyEmo.innerText)  keyEmo.innerText = '🔑' // Add key back if time >= 10 secs
 
 			if (checkGameStatus()) {
 				clearInterval(timer);
 				displayResult();
 			}
 		}, 1000);
-	}, 3000);
+	}, 3000); // Delay 3 seconds for countdown
 }
 
 // Display 3 seconds countdown and timer countdown
@@ -280,8 +301,9 @@ function runCountdown() {
 	let countdownTime = 3;
 
 	const pregameCountDown = setInterval(() => {
+		audios.theme.pause();
 		audios.maze.play();
-		document.getElementById('maze').style.filter = 'blur(5px)'; // Blurs entire grid & walls
+		document.getElementById('maze').style.filter = 'blur(5px)'; // Blur maze
 		countdownDiv.innerText = String(countdownTime);
 		countdownTime--;
 
@@ -321,7 +343,7 @@ function updateTimer() {
 	for (let emo in emojis) {
 		if (isCollided(emojis[emo])) {
 			emojiEffects[emo]();
-			emojis[emo].classList.add('hide'); // remove emo after colliding
+			emojis[emo].classList.add('hide'); // Remove emo after colliding
 		}
 	}
 }
@@ -332,26 +354,27 @@ function updateRecordBoard() {
 }
 
 
-/*-------------------------------- Audio Components --------------------------------*/
+/*----------------------------- Audio Components ----------------------------*/
+audios.maze.volume = 0.75; // Default maze volume
+audios.theme.volume = 0.75; // Default theme volume
+
 function muteSound() {
 	speakerIcon.src = '/assets/images/speaker.png';
 	speakerIcon.alt = 'Sound-on icon';
-	audios.santa.volume = 0;
-	audios.maze.volume = 0;
+	Object.values(audios).forEach(audio => audio.volume = 0);
 	isSoundOn = false;
 }
 
 function unmuteSound() {
 	speakerIcon.src = '/assets/images/silent.png';
 	speakerIcon.alt = 'Silent icon';
-	audios.santa.volume = 1;
-	audios.maze.volume = 1;
+	Object.keys(audios).forEach(key => audios[key].volume = key === 'santa' ? 1 : 0.75);
 	isSoundOn = true;
 }
 
 
-/*-------------------------------- Game Logic --------------------------------*/
-// Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return fall
+/*------------------------------- Game Logic -------------------------------*/
+// Helper method for checkVerticalWall and checkHorizontalWall, return true if no wall in the way, otherwise return false
 function checkWall(dir, isVertical) {
 	const x = santa.offsetLeft;
 	const y = santa.offsetTop;
@@ -391,8 +414,15 @@ function checkGameStatus() {
 	if (totalTime >= 0 && santa.offsetLeft > gridWidth) return "win";
 }
 
+class Player {
+	constructor(name) {
+		this.name = name;
+		this.record = 0;
+	}
+}
 
-/*-------------------------------- Events Handlers --------------------------------*/
+
+/*----------------------------- Events Handlers -----------------------------*/
 function up() {
 	if (checkVerticalWall('u')) {
 		santa.style.top = santa.offsetTop - cellSize + 'px';
@@ -457,7 +487,7 @@ function restartGame() {
 document.addEventListener('keydown', (e) => {
 	if (e.key === 'Enter' && (!hasGameStarted || hasGameEnded)) {
 		handleEnterKey();
-	} else if (['ArrowUp', 'ArrowDown', ['ArrowLeft', 'ArrowDown'].includes(e.key)] && hasGameStarted) {
+	} else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) && hasGameStarted) {
 		handleDirectionalInput(e);
 	}
 });
@@ -470,13 +500,15 @@ soundDiv.addEventListener('click', () => {
 	}
 });
 
+document.getElementById('enter-game').addEventListener('click', enterGame);
 restartBtn.addEventListener('click', restartGame);
 playBtn.addEventListener('click', startGame, { once: true });
 playAgainBtn.addEventListener('click', restartGame);
 
 
-/*-------------------------------- Rendering Page --------------------------------*/
+/*----------------------------- Rendering Page ------------------------------*/
 function render() {
+	displayOpening();
 	window.onload = () => storeWallsCoords();
 	initializeGrid();
 	createVerticalBoundaries();
@@ -485,3 +517,6 @@ function render() {
 }
 
 render();
+
+// only activate startGame after opening
+// attach let's go to enter key during opening
