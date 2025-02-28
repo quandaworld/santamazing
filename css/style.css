@@ -82,6 +82,10 @@ header {
 	color: var(--font-color);
 }
 
+.label {
+	font-size: 1.5rem;
+}
+
 ul {
 	list-style-type: none;
 }
@@ -104,7 +108,7 @@ ul {
 	position: absolute;
 	width: 20px;
 	height: 20px;
-	font-size: 18px;
+	font-size: 1.2rem;
 	display: flex;
 	place-items: center;
 }
