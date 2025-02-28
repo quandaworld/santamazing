@@ -29,6 +29,7 @@ __Scoring__: Your final score is the number of seconds left when you complete th
 > Tip: The key will only show up if you have __at least 10 seconds__ left. If you have less than 10 seconds and you want the key, go earn yourself some extra time 😉.
 
 ## Attributions
+* Fonts: [fonts.google.com](https://fonts.google.com/)
 * Icons: [flaticon.com](https://www.flaticon.com/)
 * Audios: [epidemicsound.com](https://www.epidemicsound.com/)
 
@@ -49,7 +50,6 @@ HTML, CSS, and JavaScript.
 
 ## Next Steps
 
-* Work on a more scalable maze design.
 * Create a maze-solving function to provide players with hints.
 * Optimize the game for mobile devices.
 * Improve the maze-generation algorithm for better scalability.
@@ -57,4 +57,3 @@ HTML, CSS, and JavaScript.
 * Add sound effects when players hit emojis.
 * Introduce more emojis with more diverse effects.
 * Design progressive levels that increase in difficulty as players advance.
-
