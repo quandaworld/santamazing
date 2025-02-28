@@ -2,8 +2,8 @@
 const cellSize = 20;
 const gridHeight = 300;
 const gridWidth = 300;
-const totalGridRows = gridHeight / cellSize; // 15
-const totalGridCols = gridWidth / cellSize; // 15
+const totalGridRows = gridHeight / cellSize;
+const totalGridCols = gridWidth / cellSize;
 const gridArr = [];
 const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
 const santaStartPos = { top: 0, left: 0 };
@@ -16,7 +16,7 @@ const audios = {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let totalTime = 70; // 30 seconds
+let totalTime = 30;
 let hasGameStarted = false;
 let hasGameEnded = false;
 let isSoundOn = true;
@@ -28,7 +28,7 @@ const maze = document.getElementById('maze');
 const santa = document.getElementById('santa');
 const exit = document.getElementById('exit');
 const walls = document.getElementsByClassName('wall');
-const wallHeight = document.getElementById('top').clientHeight; // top and bottom walls height
+const wallHeight = document.getElementById('top').clientHeight;
 const restartBtn = document.getElementById('restart');
 const playBtn = document.getElementById('play');
 const playAgainBtn = document.getElementById('play-again');
@@ -316,7 +316,7 @@ function runCountdown() {
 	const pregameCountDown = setInterval(() => {
 		audios.theme.pause();
 		audios.maze.play();
-		document.getElementById('maze').style.filter = 'blur(5px)'; // Blur maze
+		document.getElementById('maze').style.filter = 'blur(5px)';
 		countdownDiv.classList.add('show');
 		countdownDiv.innerText = String(countdownTime);
 		countdownTime--;
