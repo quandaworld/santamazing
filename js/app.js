@@ -8,7 +8,6 @@ const gridArr = [];
 const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
 const santaStartPos = { top: 0, left: 0 };
 const exitPos = { top: 0, left: 0 };
-const records = [];
 const audios = {
 	maze: new Audio('/assets/audios/maze.mp3'),
 	santa: new Audio('/assets/audios/santa.mp3'),
@@ -19,7 +18,9 @@ const audios = {
 /*---------------------------- Variables (state) ----------------------------*/
 let totalTime = 50; // 30 seconds
 let hasGameStarted = false;
+let hasGameEnded = false;
 let isSoundOn = true;
+let player;
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -252,18 +253,18 @@ function displayOpening() {
 
 // Enter game after opening
 function enterGame() {
-	records.push(new Player(nameInput.value));
+	player = new Player(nameInput.value.trim());
 	document.getElementById('main').style.removeProperty('filter');
-	document.getElementById('opening').style.display = 'none'; 
+	document.getElementById('opening').style.display = 'none';
 	audios.theme.play();
 }
 
 // Update page UI when game ends
 function displayResult() {
+	if (hasGameEnded) return;
+
 	const resultDiv = document.getElementById('result');
-
 	document.getElementById('maze').style.filter = 'blur(5px)'; // Blur maze
-
 	resultDiv.classList.add('show');
 	playBtn.classList.add('hide');
 	restartBtn.classList.add('hide');
@@ -274,11 +275,14 @@ function displayResult() {
 		exit.innerText = '🎉';
 		audios.santa.play();
 		resultDiv.innerText = 'Mission Accomplished!';
+		updateLocalStorage();
+		displayTopPlayers();
 	} else if (checkGameStatus() === 'lose') {
 		resultDiv.innerText = "Time's Up!";
 	}
 
 	santa.innerText = '' // Remove Santa when game ends
+	hasGameEnded = true;
 }
 
 // Start and pause timer when game ends
@@ -292,12 +296,13 @@ function runTimer() {
 			totalTime--;
 
 			if (totalTime < 10) keyEmo.innerText = ''; // Remove key if time < 10 secs
-
-			if (totalTime >= 10 && !keyEmo.innerText)  keyEmo.innerText = '🔑' // Add key back if time >= 10 secs
+			if (totalTime >= 10 && !keyEmo.innerText) keyEmo.innerText = '🔑' // Add key back if time >= 10 secs
 
 			if (checkGameStatus()) {
+				totalTime++;
 				clearInterval(timer);
 				displayResult();
+				return;
 			}
 		}, 1000);
 	}, 3000); // Delay 3 seconds for countdown
@@ -356,9 +361,20 @@ function updateTimer() {
 	}
 }
 
-// Update top scorers board with localStorage
-function updateRecordBoard() {
+// Display top players
+function displayTopPlayers() {
+	const players = JSON.parse(localStorage.getItem('players')) || [];
 
+	const recordsList = document.getElementById('records');
+	console.log(recordsList);
+
+	recordsList.innerHTML = '<li class="label">Top Records</li>';
+
+	players.forEach(player => {
+		const listItem = document.createElement('li');
+		listItem.innerText = `${player.name} - ${player.record}`;
+		recordsList.appendChild(listItem);
+	});
 }
 
 
@@ -424,10 +440,26 @@ function checkGameStatus() {
 }
 
 class Player {
-	constructor(name = 'Good Kid') {
+	constructor(name = 'Good Kid') { // If player doesn't enter name, they will be represented as Good Kid
 		this.name = name;
-		this.record = 0;
+		this.record = '00:00';
 	}
+}
+
+// Update localStorage with top 5 best records
+function updateLocalStorage() {
+	const players = JSON.parse(localStorage.getItem('players')) || [];
+	player.record = `00:${totalTime}`;
+	players.push(player);
+
+	players.sort((a, b) => {
+		const aTime = parseInt(a.record.split(':')[1]);
+		const bTime = parseInt(b.record.split(':')[1]);
+		return bTime - aTime;
+	});
+
+	const topPlayers = players.slice(0, 5);
+	localStorage.setItem('players', JSON.stringify(topPlayers));
 }
 
 
@@ -506,6 +538,7 @@ playAgainBtn.addEventListener('click', restartGame);
 /*----------------------------- Rendering Page ------------------------------*/
 function render() {
 	displayOpening();
+	displayTopPlayers();
 	window.onload = () => storeWallsCoords();
 	initializeGrid();
 	createVerticalBoundaries();
