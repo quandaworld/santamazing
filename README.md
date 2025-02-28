@@ -17,8 +17,10 @@ Back in Vietnam when I was born, we didn’t have Santa. People still celebrated
 Help Santa get through the maze and find Rudolph [here](https://quandaworld.github.io/santamazing/)
 
  __Objective__: Guide Santa through a randomized maze filled with obstacles and boosts to find Rudolph—all within __60 seconds__!
+
  __Controls__: Use the arrow keys to move Santa through the maze.
-__ Emoji Effects:__
+
+ __Emoji Effects__:
 * 🍪 __Cookie__ – Adds __5 seconds__ to your time.
 * ⏰ __Clock__ – Adds __10 seconds__ to your time.
 * 👧🏻 __Kid__ – Sends Santa back to the maze entrance (he got spotted!).
@@ -39,11 +41,11 @@ __Scoring__: Your final score is the number of seconds left when you complete th
 * https://www.geeksforgeeks.org/backtracking-algorithms/
 * https://en.wikipedia.org/wiki/Maze_generation_algorithm
 * https://www.codewithfaraz.com/content/187/create-a-maze-game-with-html-css-and-javascript-source-code
-* https://www.youtube.com/watch?v=uctN47p_KVk&list=PLzxFt_y4h9vvNUMPplZh8eurz9AGvh0cD&index=6&t=686s&ab_channel=mattbatwings
-* https://www.youtube.com/watch?v=HyK_Q5rrcr4&list=PLzxFt_y4h9vvNUMPplZh8eurz9AGvh0cD&index=9&ab_channel=TheCodingTrain
-* https://www.youtube.com/watch?v=gBC_Fd8EE8A&list=PLzxFt_y4h9vvNUMPplZh8eurz9AGvh0cD&index=7&t=14s&ab_channel=V.AntonSpraul
-* https://www.youtube.com/watch?v=Qfajj84oGUo&list=PLzxFt_y4h9vvNUMPplZh8eurz9AGvh0cD&index=5&t=1467s&ab_channel=AlexanderFarrell
-* https://www.youtube.com/watch?v=DxZzcFASKlU&list=PLzxFt_y4h9vvNUMPplZh8eurz9AGvh0cD&index=3&t=632s&ab_channel=ReskillAmericans
+* https://youtu.be/uctN47p_KVk?si=C7NhpZMrRQpfX6Mz
+* https://youtu.be/HyK_Q5rrcr4?si=YHoGObjeDMU4FSov
+* https://youtu.be/gBC_Fd8EE8A?si=XOYsawYI7QunBhpx
+* https://youtu.be/Qfajj84oGUo?si=9XtEp-X0BJpXNuXa
+* https://youtu.be/DxZzcFASKlU?si=ZXFIWD9awSTzR2W4
 
 ## Technologies Used
 
