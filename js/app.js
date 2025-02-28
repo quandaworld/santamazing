@@ -254,6 +254,7 @@ function displayOpening() {
 // Enter game after opening
 function enterGame() {
 	player = new Player(nameInput.value.trim() || 'Good Kid'); // Default name to Good Kid if missing input
+	document.getElementById('current-player').innerText = `Player: ${player.name}`;
 	document.getElementById('main').style.removeProperty('filter');
 	document.getElementById('opening').style.display = 'none';
 	audios.theme.play();
@@ -388,7 +389,7 @@ function displayTopPlayers() {
 	const recordsList = document.getElementById('records');
 	console.log(recordsList);
 
-	recordsList.innerHTML = '<li class="label">Top Records</li>';
+	recordsList.innerHTML = '<li class="label">Top 5 Records</li>';
 
 	players.forEach(player => {
 		const listItem = document.createElement('li');
