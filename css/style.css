@@ -234,7 +234,7 @@ footer {
 	inset: 0;
 	pointer-events: none;
 	animation: snow 15s linear infinite;
-	background-image: url('../assets/images/snow1.png'), url('../assets/images/snow2.png'), url('../assets/images/snow3.png');
+	background-image: url('/santamazing/assets/images/snow1.png'), url('/santamazing/assets/images/snow2.png'), url('/santamazing/assets/images/snow3.png');
 }
 
 @keyframes snow {
