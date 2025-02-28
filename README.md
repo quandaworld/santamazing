@@ -54,6 +54,7 @@ HTML, CSS, and JavaScript.
 * Create a maze-solving function to provide players with hints.
 * Optimize the game for mobile devices.
 * Improve the maze-generation algorithm for better scalability.
+* Design emojis placing more intentionally instead of randomizing.
 * Add a custom-level mode where players can adjust time and maze complexity.
 * Add sound effects when players hit emojis.
 * Introduce more emojis with more diverse effects.
