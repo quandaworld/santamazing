@@ -403,14 +403,14 @@ audios.maze.volume = 0.75; // Default maze volume
 audios.theme.volume = 0.75; // Default theme volume
 
 function muteSound() {
-	speakerIcon.src = '/assets/images/speaker.png';
+	speakerIcon.src = 'assets/images/speaker.png';
 	speakerIcon.alt = 'Sound-on icon';
 	Object.values(audios).forEach(audio => audio.volume = 0);
 	isSoundOn = false;
 }
 
 function unmuteSound() {
-	speakerIcon.src = '/assets/images/silent.png';
+	speakerIcon.src = 'assets/images/silent.png';
 	speakerIcon.alt = 'Silent icon';
 	Object.keys(audios).forEach(key => audios[key].volume = key === 'santa' ? 1 : 0.75);
 	isSoundOn = true;
