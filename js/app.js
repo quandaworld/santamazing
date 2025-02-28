@@ -9,9 +9,9 @@ const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
 const santaStartPos = { top: 0, left: 0 };
 const exitPos = { top: 0, left: 0 };
 const audios = {
-	maze: new Audio('/assets/audios/maze.mp3'),
-	santa: new Audio('/assets/audios/santa.mp3'),
-	theme: new Audio('/assets/audios/theme.mp3')
+	maze: new Audio('assets/audios/maze.mp3'),
+	santa: new Audio('assets/audios/santa.mp3'),
+	theme: new Audio('assets/audios/theme.mp3')
 }
 
 
