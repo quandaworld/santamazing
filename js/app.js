@@ -16,7 +16,7 @@ const audios = {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let totalTime = 50; // 30 seconds
+let totalTime = 70; // 30 seconds
 let hasGameStarted = false;
 let hasGameEnded = false;
 let isSoundOn = true;
@@ -253,7 +253,7 @@ function displayOpening() {
 
 // Enter game after opening
 function enterGame() {
-	player = new Player(nameInput.value.trim());
+	player = new Player(nameInput.value.trim() || 'Good Kid'); // Default name to Good Kid if missing input
 	document.getElementById('main').style.removeProperty('filter');
 	document.getElementById('opening').style.display = 'none';
 	audios.theme.play();
@@ -317,6 +317,7 @@ function runCountdown() {
 		audios.theme.pause();
 		audios.maze.play();
 		document.getElementById('maze').style.filter = 'blur(5px)'; // Blur maze
+		countdownDiv.classList.add('show');
 		countdownDiv.innerText = String(countdownTime);
 		countdownTime--;
 
@@ -335,7 +336,7 @@ function isCollided(emo) {
 }
 
 // Update timer when Santa hits different emojis
-function updateTimer() {
+function displayEmojiEffects() {
 	const emojis = {
 		cookie: document.getElementById('cookie'),
 		clock: document.getElementById('clock'),
@@ -343,7 +344,7 @@ function updateTimer() {
 		key: document.getElementById('key'),
 	}
 
-	const emojiEffects = {
+	const timerEffects = {
 		cookie: () => totalTime += 6,
 		clock: () => totalTime += 11,
 		kid: () => Object.assign(santa.style, { top: `${santaStartPos.top}px`, left: '0px' }),
@@ -353,9 +354,28 @@ function updateTimer() {
 		},
 	};
 
+	const extraDiv = document.getElementById('extra');
+
+	const shadowEffects = {
+		cookie: '+5',
+		clock: '+10',
+		kid: '👧🏻',
+		key: '-10',
+	};
+
+
 	for (let emo in emojis) {
 		if (isCollided(emojis[emo])) {
-			emojiEffects[emo]();
+			// Display maze shadow
+			extraDiv.classList.add('show');
+			extraDiv.innerText = shadowEffects[emo];
+			setTimeout(() => {
+				extraDiv.classList.remove('show');
+			}, 1000);
+
+			// Update timer
+			timerEffects[emo]();
+
 			emojis[emo].classList.add('hide'); // Remove emo after colliding
 		}
 	}
@@ -440,7 +460,7 @@ function checkGameStatus() {
 }
 
 class Player {
-	constructor(name = 'Good Kid') { // If player doesn't enter name, they will be represented as Good Kid
+	constructor(name) {
 		this.name = name;
 		this.record = '00:00';
 	}
@@ -508,7 +528,7 @@ function handleDirectionalInput(e) {
 			break;
 	}
 
-	updateTimer();
+	displayEmojiEffects();
 }
 
 function restartGame() {

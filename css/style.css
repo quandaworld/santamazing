@@ -75,7 +75,6 @@ header {
 }
 
 #side-boards {
-	justify-self: center;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 60vw;
@@ -145,10 +144,11 @@ ul {
 
 
 #result,
-#countdown {
+#countdown,
+#extra {
 	position: absolute;
 	inset: 0;
-	display: flex;
+	display: none;
 	justify-content: center;
 	align-items: center;
 }
@@ -157,12 +157,28 @@ ul {
 	font-size: 1.8rem;
 }
 
-#countdown {
+#countdown,
+#extra {
 	font-size: 11rem;
 }
 
+#extra {
+  opacity: 0.3;
+  animation: fadeOut 2s forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 #result.show,
-#countdown.show {
+#countdown.show,
+#extra.show {
 	display: flex;
 }
 
