@@ -300,7 +300,6 @@ function runTimer() {
 			if (totalTime >= 10 && !keyEmo.innerText) keyEmo.innerText = '🔑' // Add key back if time >= 10 secs
 
 			if (checkGameStatus()) {
-				totalTime++;
 				clearInterval(timer);
 				displayResult();
 				return;
