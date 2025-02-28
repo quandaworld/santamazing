@@ -16,7 +16,7 @@ const audios = {
 
 
 /*---------------------------- Variables (state) ----------------------------*/
-let totalTime = 30;
+let totalTime = 60;
 let hasGameStarted = false;
 let hasGameEnded = false;
 let isSoundOn = true;
