@@ -30,6 +30,7 @@ __Scoring__: Your final score is the number of seconds left when you complete th
 
 ## Attributions
 * Fonts: [fonts.google.com](https://fonts.google.com/)
+* Snow images: [pngtree.com](https://pngtree.com/)
 * Icons: [flaticon.com](https://www.flaticon.com/)
 * Audios: [epidemicsound.com](https://www.epidemicsound.com/)
 
