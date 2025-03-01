@@ -21,6 +21,9 @@ let hasGameStarted = false;
 let hasGameEnded = false;
 let isSoundOn = true;
 let player;
+let delayCountdown;
+let pregameCountdown;
+let timer;
 
 
 /*------------------------ Cached Element References ------------------------*/
@@ -35,11 +38,13 @@ const playAgainBtn = document.getElementById('play-again');
 const soundDiv = document.getElementById('sound');
 const speakerIcon = document.getElementById('speaker-icon');
 const nameInput = document.getElementById('player');
+const countdownDiv = document.getElementById('countdown');
+const resultDiv = document.getElementById('result');
 
 
 /*--------------------------- Grid Manipulations ----------------------------*/
 // Store grid walls' coordinations
-function storeWallsCoords() {
+function storeWallCoords() {
 	for (let i = 0; i < walls.length; i++) {
 		wallCoords.lefts.push(walls[i].offsetLeft);
 		wallCoords.rights.push(walls[i].offsetLeft + walls[i].clientWidth);
@@ -244,13 +249,26 @@ function displayEmojis() {
 	}
 }
 
+// Clear current maze along with the emojis and reset Santa and Rudolph positions
+function resetCurrentMaze() {
+	const extraWalls = maze.querySelectorAll('div.extra');
+	extraWalls.forEach(div => div.remove());
 
-/*--------------------------- Other DOM Components --------------------------*/
-// Display game opening
-function displayOpening() {
-	document.getElementById('main').style.filter = 'blur(100px)';
+	Object.keys(wallCoords).forEach(key => wallCoords[key] = []);
+	resultDiv.innerText = ''
+	gridArr.splice(0, gridArr.length);
+
+	document.getElementById('cookie').remove();
+	document.getElementById('clock').remove();
+	document.getElementById('kid').remove();
+	document.getElementById('key').remove();
+
+	santa.innerHTML = '<img src="assets/images/santa.png" alt="Santa icon" style="height: 20px">';
+	exit.innerHTML = '<img src="assets/images/rudolph.png" alt="Rudolph icon" style="height: 25px">';
 }
 
+
+/*--------------------------- Other DOM Components --------------------------*/
 // Enter game after opening
 function enterGame() {
 	player = new Player(nameInput.value.trim() || 'Good Kid'); // Default name to Good Kid if missing input
@@ -264,7 +282,6 @@ function enterGame() {
 function displayResult() {
 	if (hasGameEnded) return;
 
-	const resultDiv = document.getElementById('result');
 	document.getElementById('maze').style.filter = 'blur(5px)'; // Blur maze
 	resultDiv.classList.add('show');
 	playBtn.classList.add('hide');
@@ -290,8 +307,8 @@ function displayResult() {
 function runTimer() {
 	const keyEmo = document.getElementById('key');
 
-	setTimeout(() => {
-		const timer = setInterval(() => {
+	delayCountdown = setTimeout(() => {
+		timer = setInterval(() => {
 			hasGameStarted = true;
 			document.getElementById('time').innerText = '00:' + String(totalTime).padStart(2, '0');
 			totalTime--;
@@ -310,25 +327,46 @@ function runTimer() {
 
 // Display 3 seconds countdown and timer countdown
 function runCountdown() {
-	const countdownDiv = document.getElementById('countdown');
 	let countdownTime = 3;
 
-	const pregameCountDown = setInterval(() => {
+	pregameCountdown = setInterval(() => {
 		audios.theme.pause();
 		audios.maze.play();
-		document.getElementById('maze').style.filter = 'blur(5px)';
+		maze.style.filter = 'blur(5px)';
 		countdownDiv.classList.add('show');
 		countdownDiv.innerText = String(countdownTime);
 		countdownTime--;
 
 		if (countdownTime < 0) {
-			clearInterval(pregameCountDown);
-			document.getElementById('maze').style.removeProperty('filter');
+			clearInterval(pregameCountdown);
+			maze.style.removeProperty('filter');
 			countdownDiv.innerText = '';
 		}
 	}, 1000);
 
 	runTimer();
+}
+
+function resetTimers() {
+	if (timer) {
+		clearInterval(timer);
+		timer = null;
+	}
+
+	if (delayCountdown) {
+		clearInterval(delayCountdown);
+		delayCountdown = null;
+	}
+
+	if (pregameCountdown) {
+		clearInterval(pregameCountdown);
+		pregameCountdown = null;
+		maze.style.removeProperty('filter');
+		countdownDiv.innerText = '';
+	}
+
+	totalTime = 60; // NEED TO BE UPDATED TO 60 HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	document.getElementById('time').innerText = '00:60';
 }
 
 function isCollided(emo) {
@@ -414,6 +452,13 @@ function unmuteSound() {
 	speakerIcon.alt = 'Silent icon';
 	Object.keys(audios).forEach(key => audios[key].volume = key === 'santa' ? 1 : 0.75);
 	isSoundOn = true;
+}
+
+function resetAudios() {
+	audios.maze.pause();
+	audios.maze.currentTime = 0;
+	audios.theme.currentTime = 0;
+	audios.theme.play();
 }
 
 
@@ -532,7 +577,20 @@ function handleDirectionalInput(e) {
 }
 
 function restartGame() {
-	window.location.reload();
+	// Reset game state
+	hasGameStarted = false;
+	hasGameEnded = false;
+
+	// Reset buttons display
+	playBtn.classList.remove('hide');
+	restartBtn.classList.remove('hide');
+	playAgainBtn.classList.remove('show');
+	playBtn.addEventListener('click', runCountdown, { once: true });
+
+	resetCurrentMaze();
+	resetAudios();
+	resetTimers();
+	displayGame();
 }
 
 
@@ -549,21 +607,32 @@ soundDiv.addEventListener('click', () => {
 	}
 });
 
+restartBtn.addEventListener('click', () => {
+	if (!hasGameStarted || (hasGameStarted && !hasGameEnded)) restartGame();
+});
+
 document.getElementById('enter-game').addEventListener('click', enterGame);
-restartBtn.addEventListener('click', restartGame);
 playBtn.addEventListener('click', runCountdown, { once: true });
 playAgainBtn.addEventListener('click', restartGame);
 
 
 /*----------------------------- Rendering Page ------------------------------*/
-function render() {
-	displayOpening();
+function displayOpening() {
+	document.getElementById('main').style.filter = 'blur(100px)';
+}
+
+function displayGame() {
 	displayTopPlayers();
-	window.onload = () => storeWallsCoords();
 	initializeGrid();
 	createVerticalBoundaries();
 	generateRandomMaze(0, 0);
 	displayMaze();
+	storeWallCoords();
+}
+
+function render() {
+	displayOpening();
+	displayGame();
 }
 
 render();
