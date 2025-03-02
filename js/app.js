@@ -365,7 +365,7 @@ function resetTimers() {
 		countdownDiv.innerText = '';
 	}
 
-	totalTime = 60; // NEED TO BE UPDATED TO 60 HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	totalTime = 60;
 	document.getElementById('time').innerText = '00:60';
 }
 
