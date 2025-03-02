@@ -455,8 +455,13 @@ function unmuteSound() {
 }
 
 function resetAudios() {
+	// Pause current audios
 	audios.maze.pause();
 	audios.maze.currentTime = 0;
+	audios.santa.pause();
+	audios.santa.currentTime = 0;
+
+	// Play theme song
 	audios.theme.currentTime = 0;
 	audios.theme.play();
 }
