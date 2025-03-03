@@ -5,7 +5,7 @@ const gridWidth = 300;
 const totalGridRows = gridHeight / cellSize;
 const totalGridCols = gridWidth / cellSize;
 const gridArr = [];
-const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] }
+const wallCoords = { tops: [], bottoms: [], lefts: [], rights: [] };
 const santaStartPos = { top: 0, left: 0 };
 const exitPos = { top: 0, left: 0 };
 const audios = {
@@ -43,7 +43,7 @@ const resultDiv = document.getElementById('result');
 
 
 /*--------------------------- Grid Manipulations ----------------------------*/
-// Store grid walls' coordinations
+// Store grid walls' coordinates
 function storeWallCoords() {
 	for (let i = 0; i < walls.length; i++) {
 		wallCoords.lefts.push(walls[i].offsetLeft);
@@ -98,7 +98,7 @@ function createVerticalBoundaries() {
 	updateWallCoords(topHeight, botHeight, rightWall_x);
 }
 
-// Update grid walls' coordinations
+// Update grid walls' coordinates
 function updateWallCoords(topHeight, botHeight, rightWall_x) {
 	wallCoords.lefts.push(
 		0,
