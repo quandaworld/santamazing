@@ -36,17 +36,6 @@ __Scoring__: Your final score is the number of seconds left when you complete th
 * Icons: [flaticon.com](https://www.flaticon.com/)
 * Audios: [epidemicsound.com](https://www.epidemicsound.com/)
 
-## Learning Materials
-
-* https://www.geeksforgeeks.org/backtracking-algorithms/
-* https://en.wikipedia.org/wiki/Maze_generation_algorithm
-* https://www.codewithfaraz.com/content/187/create-a-maze-game-with-html-css-and-javascript-source-code
-* https://youtu.be/uctN47p_KVk?si=C7NhpZMrRQpfX6Mz
-* https://youtu.be/HyK_Q5rrcr4?si=YHoGObjeDMU4FSov
-* https://youtu.be/gBC_Fd8EE8A?si=XOYsawYI7QunBhpx
-* https://youtu.be/Qfajj84oGUo?si=9XtEp-X0BJpXNuXa
-* https://youtu.be/DxZzcFASKlU?si=ZXFIWD9awSTzR2W4
-
 ## Technologies Used
 
 HTML, CSS, and JavaScript.
