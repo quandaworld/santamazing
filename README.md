@@ -38,7 +38,7 @@ __Scoring__: Your final score is the number of seconds left when you complete th
 
 ## Technologies Used
 
-HTML, CSS, and JavaScript.
+HTML, CSS, JavaScript, and Web Storage API.
 
 ## Next Steps
 
