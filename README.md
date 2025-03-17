@@ -4,7 +4,7 @@
 
 ## Backstory
 
-Back in Vietnam when I was born, we didn’t have Santa. People still celebrated Christmas, but for the longest time, I thought maybe Santa just didn’t like hot and humid weather! So when I got this project assignment, I wanted to create something fun—something I never got to experience as a kid. That’s when I thought of Santa. At the time, I was quite deep into studying recursion, and one of the coolest recursive algorithms I came across was for generating mazes. That’s when I came up with the idea: a Santa-themed mazerunner game! And that’s how Santamazing (Santa-Maze-Amazing) was born.
+Back in Vietnam when I was born, we didn’t have Santa. People still celebrated Christmas, but for the longest time, I thought maybe Santa just didn’t like hot and humid weather! So when I got this project assignment, I wanted to create something fun—something I never got to experience as a kid. That’s when I thought of Santa. At the time, I was quite deep into studying recursion, and one of the coolest recursive algorithms I came across was for generating mazes. That’s when I came up with the idea: a Santa-themed maze-running game! And that’s how Santamazing (Santa-Maze-Amazing) was born.
 
 ## Screenshots
 
@@ -14,7 +14,7 @@ Back in Vietnam when I was born, we didn’t have Santa. People still celebrated
 
 ## Getting Started
 
-Help Santa get through the maze and find Rudolph [here](https://quandaworld.github.io/santamazing/)
+Help Santa get through the maze and find Rudolph [here](https://quandaworld.github.io/santamazing/). Make sure you turn your sound on for an immersive gameplay experience 🔊.
 
  __Objective__: Guide Santa through a randomized maze filled with obstacles and boosts to find Rudolph—all within __60 seconds__!
 
