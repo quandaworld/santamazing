@@ -1,6 +1,6 @@
 # Santamazing
 
-![Game Screen](assets/images/gamescreen.png)
+Help Santa get through the maze and find Rudolph [here](https://quandaworld.github.io/santamazing/). Make sure you turn your sound on for an immersive gameplay experience 🔊.
 
 ## Backstory
 
@@ -9,12 +9,11 @@ Back in Vietnam when I was born, we didn’t have Santa. People still celebrated
 ## Screenshots
 
 ![Start Screen](assets/images/startscreen.png)
+![Game Screen](assets/images/gamescreen.png)
 ![Victory Screen](assets/images/victory.png)
 ![Game Over Screen](assets/images/gameover.png)
 
 ## Getting Started
-
-Help Santa get through the maze and find Rudolph [here](https://quandaworld.github.io/santamazing/). Make sure you turn your sound on for an immersive gameplay experience 🔊.
 
  __Objective__: Guide Santa through a randomized maze filled with obstacles and boosts to find Rudolph—all within __60 seconds__!
 
